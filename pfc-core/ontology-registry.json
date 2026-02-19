@@ -1,1 +1,486 @@
-{"error": "Registry snapshot not available at bootstrap time. Replace this file with ont-registry-index.json from Azlan-EA-AAA GitHub Pages."}
+{
+  "@context": "https://platformcore.io/ontology/registry/",
+  "@type": "OntologyRegistrySnapshot",
+  "@id": "pfc-snapshot-PFI-W4M",
+  "name": "Azlan Ontology Registry — PFI-W4M Snapshot",
+  "sourceVersion": "9.0.0",
+  "oaaVersion": "6.1.0",
+  "releaseTag": "pfc-v1.0.0",
+  "releaseDate": "2026-02-19T19:08:20Z",
+  "targetPfi": "PFI-W4M",
+  "snapshotDescription": "Filtered ontology registry for PFI-W4M. Contains 29 ontologies from series: VE-Series, PE-Series, Foundation, Orchestration.",
+  "entries": [
+    {
+      "@id": "Entry-ONT-EMC-001",
+      "name": "EMC Ontology (Enterprise Model Composition)",
+      "namespace": "emc:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "2.0.0",
+      "gatesPassed": 8,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-07",
+      "path": "./Orchestration/EMC-ONT/Entry-ONT-EMC-001.json"
+    },
+    {
+      "@id": "Entry-ONT-ORG-001",
+      "name": "ORG Ontology (Organization Foundation)",
+      "namespace": "org:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "3.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-09",
+      "path": "./Foundation/ORG-ONT/Entry-ONT-ORG-001.json"
+    },
+    {
+      "@id": "Entry-ONT-ORG-CTX-001",
+      "name": "ORG-CONTEXT Ontology (Context Hub)",
+      "namespace": "org-ctx:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "3.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-10",
+      "path": "./Foundation/ORG-CONTEXT-ONT/Entry-ONT-ORG-CTX-001.json",
+      "subSeries": "ORG-CTX"
+    },
+    {
+      "@id": "Entry-ONT-ORG-MAT-001",
+      "name": "ORG-MAT Ontology (Organization Maturity)",
+      "namespace": "org-mat:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "2.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-09",
+      "path": "./Foundation/ORG-MAT-ONT/Entry-ONT-ORG-MAT-001.json"
+    },
+    {
+      "@id": "Entry-ONT-GA-001",
+      "name": "GA Ontology (Gap Analysis)",
+      "namespace": "ga:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-07",
+      "path": "./Foundation/GA-ONT/Entry-ONT-GA-001.json"
+    },
+    {
+      "@id": "Entry-ONT-VSOM-001",
+      "name": "VSOM Ontology (Vision-Strategy-Objectives-Metrics)",
+      "namespace": "vsom:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "3.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-09",
+      "path": "./VE-Series/VSOM-ONT/Entry-ONT-VSOM-001.json"
+    },
+    {
+      "@id": "Entry-ONT-OKR-001",
+      "name": "OKR Ontology (Objectives & Key Results)",
+      "namespace": "okr:",
+      "status": "compliant",
+      "gatesPassed": 8,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-06",
+      "oaaVersion": "6.1.0",
+      "version": "2.1.0",
+      "path": "./VE-Series/OKR-ONT/Entry-ONT-OKR-001.json"
+    },
+    {
+      "@id": "Entry-ONT-VP-001",
+      "name": "VP Ontology (Value Proposition)",
+      "namespace": "vp:",
+      "status": "compliant",
+      "gatesPassed": 8,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-02",
+      "oaaVersion": "6.1.0",
+      "version": "1.2.3",
+      "path": "./VE-Series/VP-ONT/Entry-ONT-VP-001.json"
+    },
+    {
+      "@id": "Entry-ONT-RRR-001",
+      "name": "RRR Ontology (Roles/RACI/RBAC)",
+      "namespace": "rrr:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-02",
+      "path": "./VE-Series/RRR-ONT/Entry-ONT-RRR-001.json"
+    },
+    {
+      "@id": "Entry-ONT-PMF-001",
+      "name": "PMF Ontology (Product-Market Fit)",
+      "namespace": "pmf:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "2.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-09",
+      "path": "./VE-Series/PMF-ONT/Entry-ONT-PMF-001.json"
+    },
+    {
+      "@id": "Entry-ONT-KPI-001",
+      "name": "KPI Ontology (Metrics & Key Performance Indicators)",
+      "namespace": "kpi:",
+      "status": "compliant",
+      "gatesPassed": 8,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-07",
+      "oaaVersion": "6.2.0",
+      "version": "1.0.0",
+      "path": "./VE-Series/KPI-ONT/Entry-ONT-KPI-001.json"
+    },
+    {
+      "@id": "Entry-ONT-BSC-001",
+      "name": "BSC Ontology (Balanced Scorecard & Strategy Maps)",
+      "namespace": "bsc:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-12",
+      "path": "./VE-Series/VSOM-SA/BSC-ONT/Entry-ONT-BSC-001.json",
+      "subSeries": "VSOM-SA"
+    },
+    {
+      "@id": "Entry-ONT-IND-001",
+      "name": "INDUSTRY Ontology (Porter's 5F, SWOT/TOWS, Ansoff Growth)",
+      "namespace": "ind:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-12",
+      "path": "./VE-Series/VSOM-SA/INDUSTRY-ONT/Entry-ONT-IND-001.json",
+      "subSeries": "VSOM-SA"
+    },
+    {
+      "@id": "Entry-ONT-RSN-001",
+      "name": "REASON Ontology (MECE, Logic Trees, Hypothesis-Driven Analysis)",
+      "namespace": "rsn:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-12",
+      "path": "./VE-Series/VSOM-SA/REASON-ONT/Entry-ONT-RSN-001.json",
+      "subSeries": "VSOM-SA"
+    },
+    {
+      "@id": "Entry-ONT-MAC-001",
+      "name": "MACRO Ontology (PESTEL, Scenarios, Futures Funnel, Backcasting)",
+      "namespace": "mac:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-12",
+      "path": "./VE-Series/VSOM-SA/MACRO-ONT/Entry-ONT-MAC-001.json",
+      "subSeries": "VSOM-SA"
+    },
+    {
+      "@id": "Entry-ONT-PFL-001",
+      "name": "PORTFOLIO Ontology (BCG, Three Horizons, Investment Maps, Strategic Lens)",
+      "namespace": "pfl:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-12",
+      "path": "./VE-Series/VSOM-SA/PORTFOLIO-ONT/Entry-ONT-PFL-001.json",
+      "subSeries": "VSOM-SA"
+    },
+    {
+      "@id": "Entry-ONT-NAR-001",
+      "name": "NARRATIVE Ontology (Strategic Storytelling & Communication Patterns)",
+      "namespace": "nar:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-13",
+      "path": "./VE-Series/VSOM-SC/NARRATIVE-ONT/Entry-ONT-NAR-001.json",
+      "subSeries": "VSOM-SC"
+    },
+    {
+      "@id": "Entry-ONT-CSC-001",
+      "name": "CASCADE Ontology (Audience Translation & Fidelity Tracking)",
+      "namespace": "csc:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-13",
+      "path": "./VE-Series/VSOM-SC/CASCADE-ONT/Entry-ONT-CSC-001.json",
+      "subSeries": "VSOM-SC"
+    },
+    {
+      "@id": "Entry-ONT-CUL-001",
+      "name": "CULTURE Ontology (Strategic Culture Alignment)",
+      "namespace": "cul:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-13",
+      "path": "./VE-Series/VSOM-SC/CULTURE-ONT/Entry-ONT-CUL-001.json",
+      "subSeries": "VSOM-SC"
+    },
+    {
+      "@id": "Entry-ONT-VIZ-001",
+      "name": "VIZSTRAT Ontology (Visual Strategy Artefacts & Deck Patterns)",
+      "namespace": "viz:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-13",
+      "path": "./VE-Series/VSOM-SC/VIZSTRAT-ONT/Entry-ONT-VIZ-001.json",
+      "subSeries": "VSOM-SC"
+    },
+    {
+      "@id": "Entry-ONT-PPM-001",
+      "name": "PPM Ontology (Portfolio/Programme/Project)",
+      "namespace": "ppm:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "4.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-09",
+      "path": "./PE-Series/PPM-ONT/Entry-ONT-PPM-001.json"
+    },
+    {
+      "@id": "Entry-ONT-PE-001",
+      "name": "PE Ontology (Process Engineering)",
+      "namespace": "pe:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "3.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-09",
+      "path": "./PE-Series/PE-ONT/Entry-ONT-PE-001.json"
+    },
+    {
+      "@id": "Entry-ONT-EFS-001",
+      "name": "EFS Ontology (Enterprise Framework Services)",
+      "namespace": "efs:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-07",
+      "path": "./PE-Series/EFS-ONT/Entry-ONT-EFS-001.json"
+    },
+    {
+      "@id": "Entry-ONT-EA-001",
+      "name": "EA Ontology (Enterprise Architecture Portfolio)",
+      "namespace": "ea:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-07",
+      "path": "./PE-Series/EA-ONT/Entry-ONT-EA-001.json"
+    },
+    {
+      "@id": "Entry-ONT-EA-CORE-001",
+      "name": "EA-CORE Ontology (Enterprise Architecture Core)",
+      "namespace": "ea-core:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-09",
+      "path": "./PE-Series/EA-CORE-ONT/Entry-ONT-EA-CORE-001.json"
+    },
+    {
+      "@id": "Entry-ONT-EA-TOGAF-001",
+      "name": "EA-TOGAF Ontology (TOGAF ADM Methodology)",
+      "namespace": "ea-togaf:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-09",
+      "path": "./PE-Series/EA-TOGAF-ONT/Entry-ONT-EA-TOGAF-001.json"
+    },
+    {
+      "@id": "Entry-ONT-EA-MSFT-001",
+      "name": "EA-MSFT Ontology (Microsoft Cloud Platform)",
+      "namespace": "ea-msft:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-09",
+      "path": "./PE-Series/EA-MSFT-ONT/Entry-ONT-EA-MSFT-001.json"
+    },
+    {
+      "@id": "Entry-ONT-DS-001",
+      "name": "DS Ontology (Design System)",
+      "namespace": "ds:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.1.0",
+      "gatesPassed": 7,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-10",
+      "path": "./PE-Series/DS-ONT/Entry-ONT-DS-001.json"
+    },
+    {
+      "@id": "Entry-ONT-CTX-001",
+      "name": "CTX Ontology (ContextTypes — Organisational Context Taxonomy)",
+      "namespace": "ctx:",
+      "status": "compliant",
+      "oaaVersion": "6.1.0",
+      "version": "1.0.0",
+      "gatesPassed": 8,
+      "gatesFailed": 0,
+      "validatedDate": "2026-02-10",
+      "path": "./Foundation/ORG-CONTEXT-ONT/Entry-ONT-CTX-001.json",
+      "subSeries": "ORG-CTX"
+    }
+  ],
+  "namespaceRegistry": {
+    "pf": "https://platformcore.io/ontology/",
+    "emc": "https://platformcore.io/ontology/emc/",
+    "org": "https://platformcore.io/ontology/org/",
+    "org-ctx": "https://platformcore.io/ontology/org-context/",
+    "org-mat": "https://platformcore.io/ontology/org-maturity/",
+    "ga": "https://platformcore.io/ontology/ga/",
+    "vsom": "https://platformcore.io/ontology/vsom/",
+    "okr": "https://platformcore.io/ontology/okr/",
+    "vp": "https://platformcore.io/ontology/vp/",
+    "rrr": "https://platformcore.io/ontology/rrr/",
+    "pmf": "https://platformcore.io/ontology/pmf/",
+    "kpi": "https://platformcore.io/ontology/kpi/",
+    "bsc": "https://oaa-ontology.org/v6/bsc/",
+    "ind": "https://oaa-ontology.org/v6/industry/",
+    "rsn": "https://oaa-ontology.org/v6/reason/",
+    "mac": "https://oaa-ontology.org/v6/macro/",
+    "pfl": "https://oaa-ontology.org/v6/portfolio/",
+    "nar": "https://oaa-ontology.org/v6/narrative/",
+    "csc": "https://oaa-ontology.org/v6/cascade/",
+    "cul": "https://oaa-ontology.org/v6/culture/",
+    "viz": "https://oaa-ontology.org/v6/vizstrat/",
+    "ppm": "https://platformcore.io/ontology/ppm/",
+    "pe": "https://platformcore.io/ontology/pe/",
+    "efs": "https://platformcore.io/ontology/efs/",
+    "ds": "https://platformcore.io/ontology/ds/",
+    "ea": "https://platformcore.io/ontology/ea/",
+    "ea-core": "https://oaa-ontology.org/v6/ea-core/",
+    "ea-togaf": "https://oaa-ontology.org/v6/ea-togaf/",
+    "ea-msft": "https://oaa-ontology.org/v6/ea-msft/",
+    "ctx": "https://baiv.co.uk/ontology/"
+  },
+  "seriesRegistry": {
+    "VE-Series": {
+      "name": "Value Engineering Series",
+      "description": "Strategic value definition, measurement, and analysis ontologies",
+      "ontologies": [
+        "VSOM",
+        "OKR",
+        "VP",
+        "RRR",
+        "PMF",
+        "KPI"
+      ],
+      "subSeries": {
+        "VSOM-SA": {
+          "name": "VSOM Strategy Analysis",
+          "description": "Strategic analysis frameworks layered on VSOM spine — enables deeper pattern analysis as sub-analysis of VSOM",
+          "ontologies": [
+            "BSC",
+            "INDUSTRY",
+            "REASON",
+            "MACRO",
+            "PORTFOLIO"
+          ]
+        },
+        "VSOM-SC": {
+          "name": "VSOM Strategy Communication",
+          "description": "Strategy communication, audience cascade, culture alignment, and visual artefact ontologies — the 'how we tell' complement to VSOM-SA's 'how we think'",
+          "ontologies": [
+            "NARRATIVE",
+            "CASCADE",
+            "CULTURE",
+            "VIZSTRAT"
+          ]
+        }
+      }
+    },
+    "PE-Series": {
+      "name": "Process Engineering Series",
+      "description": "Execution and process management ontologies",
+      "ontologies": [
+        "PPM",
+        "PE",
+        "EFS",
+        "EA",
+        "EA-CORE",
+        "EA-TOGAF",
+        "EA-MSFT",
+        "DS"
+      ]
+    },
+    "Foundation": {
+      "name": "Foundation Ontologies",
+      "description": "Core organizational and context ontologies",
+      "ontologies": [
+        "ORG",
+        "ORG-MAT",
+        "GA"
+      ],
+      "subSeries": {
+        "ORG-CTX": {
+          "name": "Organisation Context",
+          "description": "Context types, subtypes, and environmental factors",
+          "ontologies": [
+            "ORG-CONTEXT",
+            "CTX"
+          ],
+          "parentOntology": "ORG-CONTEXT"
+        }
+      }
+    },
+    "Orchestration": {
+      "name": "Orchestration Layer",
+      "description": "Model composition and integration ontologies",
+      "ontologies": [
+        "EMC"
+      ]
+    }
+  },
+  "statistics": {
+    "totalOntologies": 29,
+    "compliant": 29,
+    "superseded": 0,
+    "placeholder": 0,
+    "deprecated": 0
+  }
+}
