@@ -497,6 +497,7 @@ AZALZ-ONT is currently a **placeholder** (status: `placeholder`, all compliance 
 | `PFC-GRC-BRIEF-Generic-Risk-Management-Framework-v1.0.0.md` | Framework — RMF provides the risk assessment methodology used in ALZ scoring |
 | `PFI-AIRL-VE-BRIEF-01-Vision-Strategy-VSOM-v2.0.0.md` | Upstream — AIRL VSOM cascade; ALZ assessment is S2 execution |
 | `PFI-AIRL-GRC-BRIEF-06-Domains-Compliance-v2.0.0.md` | Upstream — AIRL 9-domain model; ALZ assessment applies all 9 domains |
+| `PFI-W4M-RCS-AZA-SCOPE-ALZ-WAF-Assessment-v1.0.0.md` | **Companion** — Client-deliverable assessment scope: 8 ALZ design areas + 5 WAF pillars, maturity scoring, delivery methodology |
 
 ---
 
