@@ -11,7 +11,7 @@
 > **Epic 68:** [#1005](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1005) — Azure Assessment Platform via Azure-RCS Instance
 > **Ontology Alignment:** AZALZ-ONT (placeholder), MCSB-ONT v2.0.0, GRC-FW-ONT v3.0.0, RMF-IS27005-ONT v1.0.0
 > **Design Principles:** ISO 31700 (PbD) · NCSC Secure by Design · NIST AI RMF · ICO UK GDPR · Microsoft CAF/WAR
-> **Process Frameworks:** DMAIC (Six Sigma) · DELTA+ (Analytics Maturity) · Velocity Framework (Sprint Delivery)
+> **Process Frameworks:** DELTA (Discover-Evaluate-Leverage-Transform-Adapt, PE-ONT) · DMAIC (Six Sigma) · Velocity Framework (Sprint Delivery)
 > **Classification:** INTERNAL — STRATEGIC
 
 ---
@@ -533,72 +533,90 @@ Each DMAIC phase maps to a **toolkit automation level** — the path from manual
 
 ---
 
-## 11. DELTA+ Analytics Maturity Model — Toolkit Intelligence
+## 11. DELTA Discovery Process — PE-ONT Applied to ALZ Assessment
 
-The **DELTA+ model** (Davenport, Harris & Morison) provides the analytics maturity framework for the assessment toolkit itself. DELTA+ measures how data-driven and analytically mature the toolkit is — progressing from basic scoring to predictive intelligence.
+The **DELTA process** (Discover → Evaluate → Leverage → Transform → Adapt) is the PFC platform's universal 5-phase discovery and gap analysis cycle, defined in `pe:delta-discovery-gap-analysis-template` (PE-ONT, PE-Series). DELTA is industry-agnostic by design — the phases govern HOW discovery happens; WHAT is discovered is layered in by PFI context (in this case, Azure ALZ/WAF assessment). When contextualised via the `pfc-ve-context-agent` (Layer 4 of the seven-layer architecture), DELTA becomes org/sector/maturity-specific.
 
-### 11.1 DELTA+ Components Applied to ALZ Assessment Toolkit
+> **Source ontology:** `PE-Series/PE-ONT/instance-data/pe-delta-process-template-v1.0.0.jsonld`
+> **Architecture:** `PFC-AGNT-BRIEF-VE-Contextualised-DELTA-DMAIC-OKR-QVF-Agent-Architecture-v1.0.0.md`
+> **Epic lineage:** Epic 52 (#755) DELTA · Epic 40 (#577) Skills Workbench · Epic 69 (#1018) SNG Directed Graph
 
-| DELTA+ Element | Application to ALZ Assessment Toolkit |
-|---|---|
-| **D — Data** | Assessment telemetry, Azure Resource Graph queries, Policy compliance state, Defender for Cloud scores, historical assessment baselines |
-| **E — Enterprise** | Toolkit integration across PFI instances (W4M, BAIV, AIRL) — shared assessment data model via AZALZ-ONT |
-| **L — Leadership** | CISO/DPO sponsor engagement model — scored findings tied to business risk, not just technical gaps |
-| **T — Targets** | Business outcomes: assessment-to-deployment conversion, time-to-compliance, MCSB coverage improvement over time |
-| **A — Analysts** | Assessment team capability — from consultant-led to agent-assisted to autonomous assessment delivery |
-| **+ Technology** | Azure Resource Graph, AZALZ-ONT schema, `pfc-alz-assess` agent, Supabase assessment store |
-| **+ Analytical Techniques** | Maturity scoring, gap analysis, trend analysis, predictive risk scoring, cross-client benchmarking |
+### 11.1 DELTA Phases Applied to ALZ Assessment
 
-### 11.2 DELTA+ Maturity Stages for the Toolkit
-
-| Stage | Score | Toolkit Capability | Target Date |
-|---|---|---|---|
-| **1 — Analytically Impaired** | 1.0–1.9 | No structured assessment — ad-hoc consultant review, no scoring model | ~~Baseline~~ (passed) |
-| **2 — Localised Analytics** | 2.0–2.9 | AZALZ-ONT scoring model operational; manual data collection; structured but consultant-dependent | **Current (Q1 2026)** |
-| **3 — Analytical Aspirations** | 3.0–3.9 | Semi-automated: agent-assisted scoring, auto-generated heatmaps, standardised questionnaire + Azure export parsing | **Q3 2026** |
-| **4 — Analytical Companies** | 4.0–4.9 | Fully automated DMAIC: autonomous scoring from Azure data, predictive gap analysis, cross-client benchmarking | **Q1 2027** |
-| **5 — Analytical Competitors** | 5.0–5.9 | Prescriptive analytics: toolkit recommends before client asks, continuous monitoring with drift alerts, industry benchmarks | **Q3 2027** |
-
-### 11.3 DELTA+ × DMAIC Integration
-
-The DELTA+ maturity level determines what each DMAIC phase can achieve:
-
-| DMAIC Phase | Stage 2 (Current) | Stage 3 (Semi-Auto) | Stage 4 (Full Auto) | Stage 5 (Prescriptive) |
+| Phase | PE-ONT Definition | ALZ Assessment Application | Gate | Duration |
 |---|---|---|---|---|
-| **Define** | Manual scoping | Self-service questionnaire | Auto-discovery from Azure | Proactive: toolkit detects assessment need |
-| **Measure** | Consultant scoring | Agent-assisted scoring | Autonomous scoring | Continuous measurement |
-| **Analyse** | Manual gap analysis | Auto-generated heatmaps | Predictive risk analysis | Cross-client benchmarking |
-| **Improve** | Written recommendations | Drafted remediation roadmap | Auto-generated sprint + IaC | Prescriptive: "Deploy this now" |
-| **Control** | Scheduled re-assessment | Policy baseline deployment | Automated drift detection | Self-healing governance |
+| **Discover** | Extract and structure context. Map the territory. Surface raw evidence before analysis. | Scope Azure estate; capture tenant config + Azure Resource Graph data; map stakeholders (CISO, DPO, Cloud Architect); formulate driving question ("Is this ALZ design fit for deployment?"); populate `orgctx:OrganizationContext` | **G1:** Scope defined, stakeholders mapped, ≥3 evidence sources, driving question formulated | Day 0–1 |
+| **Evaluate** | Assess current state vs desired state. Decompose the gap using MECE discipline. | Score 8 ALZ DAs (1–4) + 5 WAF pillars (1–5) against target maturity; MECE decomposition of gaps per DA; quantify each gap with magnitude/impact/urgency; evidence chains per finding; MCSB control coverage baseline | **G2:** MECE tree validated, ≥1 gap quantified per branch, evidence chains documented, baseline scored | Day 1–2 |
+| **Leverage** | Identify highest-impact levers. Generate hypotheses. Test assumptions. Prioritise. | Sensitivity analysis on gap tree — identify top-3 highest-impact DAs for remediation; hypothesis per lever ("If we implement PIM, DA-2 moves from Basic to Good"); test MustBeTrue assumptions; impact-effort mapping; cross-DA dependency analysis | **G3:** Top-3 levers with sensitivity, hypotheses tested, no invalidated MustBeTrue assumptions (BR-DELTA-001: if invalidated → loop to Evaluate) | Day 2 |
+| **Transform** | Plan and execute interventions. Translate recommendations into delivery. | Blueprint variant selection; remediation roadmap as OKR cascade; BSC measures linked to KPIs; sprint plan via Velocity Framework; PbD/SbD gate application; DPIA scope; compliance evidence generation; stakeholder narrative | **G4:** OKR cascade defined, BSC operationalised, KPIs instrumented, stakeholder comms complete | Day 2–3 |
+| **Adapt** | Close the feedback loop. Monitor impact. Learn. Feed into next cycle. | Post-deployment monitoring via Azure Policy; variance analysis (actual vs planned per KPI); lesson capture; cycle determination (None/Adjust/Pivot/Revise); threshold breach detection triggers re-assessment; prepare next DELTA cycle inputs if gaps remain | **G5:** Variance analysis complete, lessons captured, cycle output determined, next-cycle inputs prepared | Ongoing |
 
-### 11.4 Toolkit Automation Roadmap
+### 11.2 DELTA × DMAIC Relationship
+
+DELTA and DMAIC are **complementary, not competing** processes in the PFC architecture:
+
+| Dimension | DELTA | DMAIC |
+|---|---|---|
+| **Purpose** | Discovery-led — "What is the gap and what levers close it?" | Quality-led — "How do we measure, analyse, and control the process?" |
+| **Origin** | PE-ONT (PFC platform process engineering) | Six Sigma (external methodology, VE-integrated) |
+| **Strength** | Evidence chains, MECE discipline, hypothesis testing, sensitivity analysis | Statistical rigour, process control, continuous improvement loops |
+| **ALZ role** | Discovery engine — scopes, evaluates, identifies levers, generates transformation plan | Delivery engine — structures the assessment delivery, ensures measurement, maintains control |
+| **Sequence** | DELTA runs first (or in parallel) — produces gap analysis + lever identification | DMAIC wraps the delivery — ensures each assessment is measured, repeatable, controlled |
+
+### 11.3 DELTA Phase Mapping to DMAIC
+
+```text
+DELTA Discover  ←→  DMAIC Define    (scope and context)
+DELTA Evaluate  ←→  DMAIC Measure   (baseline scoring and gap quantification)
+DELTA Leverage  ←→  DMAIC Analyse   (root cause, sensitivity, hypothesis testing)
+DELTA Transform ←→  DMAIC Improve   (intervention planning and execution)
+DELTA Adapt     ←→  DMAIC Control   (feedback loop, monitoring, re-assessment)
+```
+
+The key distinction: **DELTA gates (G1–G5) enforce evidence quality** (MECE validation, hypothesis testing, MustBeTrue assumptions). **DMAIC phases enforce process quality** (measurement, statistical control, repeatability). Both run in parallel — DELTA ensures we find the right things; DMAIC ensures we do it the right way.
+
+### 11.4 Contextualised DELTA for ALZ — Via pfc-ve-context-agent
+
+When the VE chain has completed for a W4M-RCS-AZA engagement, the `pfc-ve-context-agent` produces a **ContextualisationManifest** that parametrises DELTA:
+
+| Manifest Parameter | Source | Effect on DELTA |
+|---|---|---|
+| `scope` | VE strategic scope → `functional` or `enterprise` | Controls phase depth and duration |
+| `sector` | Foundation context → UK Public Sector / Mid-Market | Selects sector-specific discovery templates |
+| `maturityLevel` | ORG-MAT assessment | Calibrates gate thresholds (Level 2 org gets different G2 criteria than Level 4) |
+| `discoveryTemplates` | PFI instance → AZALZ-ONT + MCSB-ONT + EA-MSFT-ONT | Determines which ontologies drive the Evaluate phase |
+| `gateCalibration` | Maturity-dependent thresholds | Prevents false positives (Level 2 passing Level 4 gates) |
+| `evidenceRequirements` | VE conclusions + GRC compliance obligations | DELTA hypotheses validated against VE strategic context |
+| `qvfTermination` | Always true for VE-tier engagements | DELTA must terminate in `qvf:EconomicCase` — findings without economic quantification are architecturally incomplete |
+
+### 11.5 DELTA Automation Roadmap
 
 ```mermaid
 gantt
-    title ALZ Assessment Toolkit — DMAIC + DELTA+ Automation Roadmap
+    title ALZ Assessment — DELTA + DMAIC Automation Roadmap
     dateFormat YYYY-MM
     axisFormat %b %Y
 
-    section DELTA Stage 2 (Current)
-    AZALZ-ONT scoring model         :done, s2a, 2026-01, 2026-03
-    Manual DMAIC delivery (3-5 days) :active, s2b, 2026-03, 2026-06
+    section DELTA Manual (Current)
+    Consultant-led DELTA discovery     :done, d1, 2026-01, 2026-03
+    Manual DMAIC delivery (3-5 days)   :active, d2, 2026-03, 2026-06
 
-    section DELTA Stage 3 (Semi-Auto)
-    Self-service questionnaire       :s3a, 2026-06, 2026-08
-    Agent-assisted scoring           :s3b, 2026-07, 2026-09
-    Auto-generated heatmaps          :s3c, 2026-08, 2026-10
-    DMAIC delivery ≤2 days           :s3d, 2026-09, 2026-12
+    section DELTA Semi-Auto (Q3 2026)
+    pfc-ve-context-agent integration   :d3, 2026-06, 2026-08
+    Agent-assisted Evaluate + Leverage :d4, 2026-07, 2026-09
+    Auto-generated MECE gap trees      :d5, 2026-08, 2026-10
+    DELTA+DMAIC delivery in 1-2 days   :d6, 2026-09, 2026-12
 
-    section DELTA Stage 4 (Full Auto)
-    Azure Resource Graph auto-discovery :s4a, 2026-10, 2027-01
-    Autonomous pfc-alz-assess agent     :s4b, 2026-11, 2027-02
-    Predictive gap analysis             :s4c, 2027-01, 2027-03
-    DMAIC delivery <4 hours             :s4d, 2027-02, 2027-06
+    section DELTA Autonomous (Q1 2027)
+    Azure Resource Graph auto-Discover :d7, 2026-10, 2027-01
+    Autonomous pfc-alz-assess agent    :d8, 2026-11, 2027-02
+    Automated G1-G5 gate validation    :d9, 2027-01, 2027-03
+    DELTA+DMAIC delivery in hours      :d10, 2027-02, 2027-06
 
-    section DELTA Stage 5 (Prescriptive)
-    Cross-client benchmarking        :s5a, 2027-04, 2027-07
-    Proactive assessment triggers    :s5b, 2027-06, 2027-09
-    Self-healing governance          :s5c, 2027-07, 2027-10
+    section QVF Terminal Layer (Q2 2027)
+    QVF economic case from DELTA output :d11, 2027-03, 2027-06
+    Cross-client benchmarking           :d12, 2027-04, 2027-07
+    Continuous DELTA Adapt cycle         :d13, 2027-06, 2027-10
 ```
 
 ---
@@ -716,7 +734,7 @@ AZALZ-ONT is currently a **placeholder** (status: `placeholder`, all compliance 
 | **Kano** | PbD/SbD gates = Excitement/Moat. CAF→ALZ bridge = Excitement. Design area scoring = Performance. DPIA auto-gen = Excitement |
 | **PMF** | Post-CAF clients at peak intent. Microsoft creates ALZ demand; AIRL captures the pre-deployment assessment gap. Sean Ellis target ≥40% |
 | **DMAIC** | Define→Measure→Analyse→Improve→Control maps 1:1 to assessment delivery. Every phase independently automatable. Manual 3–5 days → semi-auto 1–2 days → fully auto <4 hours |
-| **DELTA+** | Toolkit at Stage 2 (Localised Analytics). Target: Stage 3 (Q3 2026, agent-assisted), Stage 4 (Q1 2027, autonomous), Stage 5 (Q3 2027, prescriptive) |
+| **DELTA** | PE-ONT 5-phase discovery: Discover→Evaluate→Leverage→Transform→Adapt with G1–G5 gates. Contextualised via pfc-ve-context-agent ContextualisationManifest. MECE gap discipline, hypothesis testing, sensitivity analysis. Terminates in QVF economic case |
 
 The structural insight: **WAR scores after deployment; AIRL ALZ Assessment scores before.** This is not a timing difference — it is a fundamentally different value proposition. Pre-deployment assessment prevents findings. Post-deployment review discovers them. Prevention is worth more than discovery, and the PbD/SbD gates make it structurally uncopyable by any partner without an ontology-driven scoring model.
 
