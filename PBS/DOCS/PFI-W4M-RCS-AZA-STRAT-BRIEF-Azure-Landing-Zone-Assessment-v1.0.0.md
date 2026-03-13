@@ -267,7 +267,7 @@ Client receives CAF maturity score — no ALZ blueprint prescribed
               ↓
 Post-CAF Void begins (typically 6–12 weeks)
               ↓
-PFI-AIRL engages — ALZ Assessment (5 design areas + MCSB + PbD/SbD)
+PFI-AIRL engages — ALZ Assessment (8 design areas + 5 WAF pillars + PbD/SbD)
               ↓
 Scored ALZ design report + blueprint variant selection in ≤3 days
               ↓
@@ -304,35 +304,78 @@ Compliance evidence pack auto-generated — audit-ready on day one
 
 ## 7. ALZ Design Area Assessment Model
 
-### 7.1 The 5 ALZ Design Areas (AZALZ-ONT Planned)
+> **Alignment note:** This section is aligned to the companion scope document `PFI-W4M-RCS-AZA-SCOPE-ALZ-WAF-Assessment-v1.0.0.md` which defines the full assessment methodology, maturity spectrums, and scoring model.
 
-| Design Area | Assessment Focus | MCSB Control Families | AIRL Domain Link |
-|---|---|---|---|
-| **Identity & Access** | Entra ID configuration, PIM, Conditional Access, Zero Trust identity posture | NS (Network Security), IM (Identity Management) | D08: SbD Maturity |
-| **Network & Connectivity** | Hub-spoke topology, private endpoints, NSG/firewall rules, DNS, ExpressRoute/VPN | NS, ES (Endpoint Security) | D03: Infrastructure Readiness |
-| **Management & Monitoring** | Azure Monitor, Log Analytics, Sentinel, cost governance, tagging standards | LT (Logging & Threat Detection), IR (Incident Response) | D04: Process & Operational Maturity |
-| **Platform Automation** | IaC (Bicep/Terraform), CI/CD pipelines, policy-as-code, DevSecOps | PA (Posture & Vulnerability), DS (DevOps Security) | D03: Infrastructure Readiness |
-| **Security & Governance** | Azure Policy, Defender for Cloud, RBAC scoping, data classification, encryption | DP (Data Protection), AM (Asset Management), GS (Governance & Strategy) | D08: SbD + D07: PbD |
+### 7.1 The 8 ALZ Design Areas (Platform Level — AZALZ-ONT Planned)
 
-### 7.2 Maturity Scoring per Design Area
+The assessment uses Microsoft's recommended 8 ALZ design areas, evaluated in dependency sequence. Each design area is scored on a **1–4 scale** (Poor / Basic / Good / Excellent) per the companion scope doc.
 
-| Level | Score | Definition |
+| DA | Design Area | Assessment Focus | MCSB Control Families | AIRL Domain Link |
+|---|---|---|---|---|
+| **DA-1** | **Billing & Entra Tenant** | Billing arrangement (EA/MCA/CSP), tenant config, billing-to-hierarchy alignment | GS (Governance & Strategy) | D05: Financial & Commercial |
+| **DA-2** | **Identity & Access Management** | MFA, PIM, Conditional Access, break-glass, RBAC, external identity, monitoring | IM (Identity Management), PA (Privileged Access) | D08: SbD Maturity |
+| **DA-3** | **Resource Organisation** | Management Group hierarchy, subscription strategy, subscription vending | AM (Asset Management) | D03: Azure Platform Maturity |
+| **DA-4** | **Network Topology & Connectivity** | Hub-spoke/VWAN, on-prem connectivity, IPAM, Private Endpoints, WAF, DDoS, NSGs, DNS | NS (Network Security), ES (Endpoint Security) | D03: Azure Platform Maturity |
+| **DA-5** | **Security** | Security baseline, Defender for Cloud, service enablement controls, Sentinel, threat protection | All security families | D08: SbD Maturity |
+| **DA-6** | **Management** | Logging, monitoring, compliance assurance, operational visibility, patching, backup | LT (Logging & Threat Detection), IR (Incident Response) | D04: Process & Operational Maturity |
+| **DA-7** | **Governance** | Cost management, tagging strategy, FinOps, Azure Advisor, spend optimisation | GS (Governance & Strategy) | D05: Financial & Commercial |
+| **DA-8** | **Platform Automation & DevOps** | IaC (Bicep/Terraform), CI/CD, GitOps, Azure Policy effects, team structure (CCoE/Platform Engineering) | DS (DevOps Security) | D03: Azure Platform Maturity |
+
+### 7.2 The 5 WAF Pillars (Workload Level)
+
+In addition to platform-level design areas, the assessment evaluates representative workloads against the **5 WAF Pillars**, scored on the Microsoft WAF Maturity Model **(Levels 1–5: Initial → Optimised)**.
+
+| Pillar | Assessment Focus | AIRL Domain Link |
 |---|---|---|
-| **1 — Ad Hoc** | 0–20% | No structured design — decisions made reactively, no documentation |
-| **2 — Developing** | 21–40% | Some design decisions documented but not consistently applied; no policy enforcement |
-| **3 — Defined** | 41–60% | Design areas documented, policies defined but not all enforced; partial MCSB alignment |
-| **4 — Managed** | 61–80% | Design areas consistently applied, policy-as-code enforced, Defender for Cloud active, PbD/SbD gates in place |
-| **5 — Optimised** | 81–100% | Continuous improvement, automated compliance, full MCSB alignment, PbD/SbD embedded, evidence auto-generated |
+| **Reliability** | SLOs/SLAs, failure mode analysis, redundancy, scaling, self-healing, DR, health monitoring | D03: Azure Platform Maturity |
+| **Security** | Security baseline, supply chain, data classification, segmentation, identity, encryption, secrets, incident response | D08: SbD Maturity + D07: PbD Maturity |
+| **Cost Optimisation** | Financial responsibility culture, cost modelling, monitoring, governance, right-sizing, reserved capacity | D05: Financial & Commercial |
+| **Operational Excellence** | DevOps culture, IaC, observability, incident management, safe deployment practices, automation | D04: Process & Operational Maturity |
+| **Performance Efficiency** | Performance targets, capacity planning, service selection, performance testing, scaling, critical flow optimisation | D03: Azure Platform Maturity |
 
-### 7.3 Composite ALZ Readiness Score
+### 7.3 Maturity Scoring
+
+#### ALZ Design Areas (1–4 Scale)
+
+| Score | Rating | Description |
+|---|---|---|
+| **1** | Poor | No implementation or fundamentally misaligned with ALZ guidance |
+| **2** | Basic | Partial implementation with significant gaps |
+| **3** | Good | Solid implementation aligned to ALZ guidance with minor gaps |
+| **4** | Excellent | Full implementation aligned to ALZ conceptual architecture with automation and continuous improvement |
+
+#### WAF Pillars (1–5 Scale)
+
+| Score | Level | Description |
+|---|---|---|
+| **1** | Initial | Reactive, unpredictable, no formal practices |
+| **2** | Evolving | Ad-hoc, some awareness but inconsistent application |
+| **3** | Acceptable | Well-understood, proactive practices in place |
+| **4** | Advanced | Measured, controlled, predictable outcomes |
+| **5** | Optimised | Continuous improvement, feedback loops, industry-leading |
+
+### 7.4 Composite Scoring Model
+
+#### ALZ + WAF Combined Maturity Rating
+
+| Rating | Criteria |
+|---|---|
+| **Foundational** | ALZ < 2.0 or WAF < 2.0 |
+| **Developing** | ALZ 2.0–2.9 and WAF 2.0–2.9 |
+| **Established** | ALZ 3.0–3.4 and WAF 3.0–3.9 |
+| **Advanced** | ALZ 3.5–3.9 and WAF 4.0–4.4 |
+| **Optimised** | ALZ 4.0 and WAF 4.5+ |
+
+#### AIRL-Extended Composite Score (with PbD/SbD overlay)
 
 | Component | Weight | Source |
 |---|---|---|
-| ALZ Design Area Average (5 areas) | 40% | AZALZ-ONT scoring |
-| MCSB Control Coverage | 25% | MCSB-ONT alignment check |
+| ALZ Design Area Average (8 areas) | 35% | AZALZ-ONT scoring (1–4 normalised) |
+| WAF Pillar Average (5 pillars) | 20% | WAF maturity model (1–5 normalised) |
+| MCSB Control Coverage | 15% | MCSB-ONT alignment check |
 | PbD Maturity (AIRL D07) | 15% | AIRL 9-domain scoring |
-| SbD Maturity (AIRL D08) | 15% | AIRL 9-domain scoring |
-| Compliance Readiness (AIRL D09) | 5% | AIRL 9-domain scoring |
+| SbD Maturity (AIRL D08) | 10% | AIRL 9-domain scoring |
+| Compliance Readiness (AIRL D06) | 5% | AIRL 9-domain scoring |
 
 ---
 
@@ -364,8 +407,9 @@ Input Sources
 └── Client Questionnaire                 → Organisation-specific context + constraints
          ↓
 ALZ Assessment Agent (pfc-alz-assess)
-├── Parse → normalise to AZALZ-ONT 5-design-area schema
-├── Score → apply maturity levels 1–5 per design area
+├── Parse → normalise to AZALZ-ONT 8-design-area schema (DA-1 through DA-8)
+├── Score → apply maturity levels 1–4 per design area (Poor/Basic/Good/Excellent)
+├── WAF-score → apply WAF maturity model 1–5 per pillar (5 workload pillars)
 ├── MCSB-map → check alignment against 12 MCSB control families
 ├── PbD-gate → apply ISO 31700 privacy review to data workloads
 ├── SbD-gate → apply NCSC SbD + Zero Trust validation
@@ -379,7 +423,8 @@ Ontology Layer
 └── GRC-FW-ONT: compliance evidence mapping
          ↓
 Output Artefacts
-├── ALZ Design Area Scorecard (5 areas, maturity levels, heatmap)
+├── ALZ Design Area Scorecard (8 areas, maturity levels, heatmap)
+├── WAF Pillar Scorecard (5 pillars, maturity levels 1–5)
 ├── MCSB Alignment Report (12 control families, coverage %)
 ├── ALZ Blueprint Variant Recommendation (scored rationale)
 ├── PbD/SbD Gate Report (pass/fail per gate, remediation register)
@@ -393,7 +438,7 @@ Output Artefacts
 | Phase | Duration | Output |
 |---|---|---|
 | **Discovery** | Day 1 | Client questionnaire + Azure config export + CAF data (if available) |
-| **Assessment** | Day 1–2 | 5 design areas scored, MCSB aligned, PbD/SbD gates applied |
+| **Assessment** | Day 1–2 | 8 ALZ design areas scored (1–4), 5 WAF pillars scored (1–5), MCSB aligned, PbD/SbD gates applied |
 | **Report & Sprint Plan** | Day 2–3 | Scored report, blueprint recommendation, sprint plan, compliance evidence |
 | **Client Review** | Day 3–5 | Findings walkthrough, decision on ALZ deployment engagement |
 | **ALZ Deployment Sprint** | Day 5–26 | ≤21-day ALZ deployment via Velocity Framework (if client proceeds) |
@@ -506,7 +551,7 @@ AZALZ-ONT is currently a **placeholder** (status: `placeholder`, all compliance 
 | VE Layer | Finding |
 |---|---|
 | **Vision** | Definitive pre-deployment ALZ assessment — assess first, deploy once, PbD/SbD-native |
-| **Strategy** | 5 pillars: design area scoring, MCSB baseline, PbD/SbD gates, CAF→ALZ bridge, compliance evidence |
+| **Strategy** | 5 strategy pillars: 8 ALZ design area scoring + 5 WAF pillar scoring, MCSB baseline, PbD/SbD gates, CAF→ALZ bridge, compliance evidence |
 | **Objectives** | Productise skill (Q2), 10 engagements (Q4), zero critical findings, 100% PbD/SbD gate coverage |
 | **KPIs** | ≤3-day delivery, ≥85% MCSB coverage, ≥70% assessment→deployment conversion, ≥65 NPS |
 | **Value Prop** | Pain: ALZ design is ad-hoc, security discovered post-build, privacy absent. AIRL: scored, gated, sprint-ready in 3 days |
