@@ -11,6 +11,7 @@
 > **Epic 68:** [#1005](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1005) — Azure Assessment Platform via Azure-RCS Instance
 > **Ontology Alignment:** AZALZ-ONT (placeholder), MCSB-ONT v2.0.0, GRC-FW-ONT v3.0.0, RMF-IS27005-ONT v1.0.0
 > **Design Principles:** ISO 31700 (PbD) · NCSC Secure by Design · NIST AI RMF · ICO UK GDPR · Microsoft CAF/WAR
+> **Process Frameworks:** DMAIC (Six Sigma) · DELTA+ (Analytics Maturity) · Velocity Framework (Sprint Delivery)
 > **Classification:** INTERNAL — STRATEGIC
 
 ---
@@ -433,19 +434,176 @@ Output Artefacts
 └── Compliance Evidence Pack (NHS DSP, CE+, ISO 27001 mappings)
 ```
 
-### 9.2 Target Delivery Timeline
+### 9.2 Target Delivery Timeline (DMAIC-Aligned)
 
-| Phase | Duration | Output |
-|---|---|---|
-| **Discovery** | Day 1 | Client questionnaire + Azure config export + CAF data (if available) |
-| **Assessment** | Day 1–2 | 8 ALZ design areas scored (1–4), 5 WAF pillars scored (1–5), MCSB aligned, PbD/SbD gates applied |
-| **Report & Sprint Plan** | Day 2–3 | Scored report, blueprint recommendation, sprint plan, compliance evidence |
-| **Client Review** | Day 3–5 | Findings walkthrough, decision on ALZ deployment engagement |
-| **ALZ Deployment Sprint** | Day 5–26 | ≤21-day ALZ deployment via Velocity Framework (if client proceeds) |
+| Phase | DMAIC | Duration | Output |
+|---|---|---|---|
+| **Discovery** | Define | Day 0–1 | Client questionnaire + Azure config export + CAF data (if available) |
+| **Assessment** | Measure | Day 1–2 | 8 ALZ design areas scored (1–4), 5 WAF pillars scored (1–5), MCSB aligned, PbD/SbD gates applied |
+| **Gap Analysis** | Analyse | Day 2 | Gap heatmap, risk register (RRR-ONT), cross-DA dependency mapping |
+| **Report & Sprint Plan** | Improve | Day 2–3 | Scored report, blueprint recommendation, remediation roadmap, sprint plan, compliance evidence |
+| **Client Review** | — | Day 3–5 | Findings walkthrough, decision on ALZ deployment engagement |
+| **ALZ Deployment Sprint** | — | Day 5–26 | ≤21-day ALZ deployment via Velocity Framework (if client proceeds) |
+| **Governance Baseline** | Control | Ongoing | Azure Policy deployment, monitoring dashboard, re-assessment triggers |
 
 ---
 
-## 10. OAA GRC Ontology Series — RCSG-Series Reference
+## 10. DMAIC Process Model — Assessment Delivery Lifecycle
+
+The assessment toolkit uses **DMAIC** (Define → Measure → Analyse → Improve → Control) as its core delivery process. DMAIC provides the structured, repeatable, data-driven improvement cycle that maps directly to the ALZ/WAF assessment lifecycle — and critically, supports **fast-tracking to automation** by making each phase a discrete, automatable step.
+
+### 10.1 DMAIC Phase Mapping
+
+```mermaid
+flowchart LR
+    subgraph D["DEFINE"]
+        D1["Scope Azure estate"]
+        D2["Identify DAs + WAF pillars"]
+        D3["Set engagement boundaries"]
+        D4["Client questionnaire"]
+    end
+
+    subgraph M["MEASURE"]
+        M1["Score 8 ALZ DAs (1–4)"]
+        M2["Score 5 WAF pillars (1–5)"]
+        M3["MCSB control coverage %"]
+        M4["PbD/SbD gate assessment"]
+    end
+
+    subgraph A["ANALYSE"]
+        A1["Gap analysis heatmap"]
+        A2["Root cause of maturity gaps"]
+        A3["Risk prioritisation (RRR-ONT)"]
+        A4["Cross-DA dependency impact"]
+    end
+
+    subgraph I["IMPROVE"]
+        I1["Remediation roadmap"]
+        I2["Blueprint variant selection"]
+        I3["Sprint plan (Velocity)"]
+        I4["Quick wins vs structural"]
+    end
+
+    subgraph C["CONTROL"]
+        C1["Azure Policy enforcement"]
+        C2["Continuous monitoring"]
+        C3["Re-assessment triggers"]
+        C4["Governance dashboard"]
+    end
+
+    D --> M --> A --> I --> C
+    C -.->|"feedback loop"| D
+
+    style D fill:#e3f2fd,stroke:#1565c0
+    style M fill:#f3e5f5,stroke:#6a1b9a
+    style A fill:#fff3e0,stroke:#e65100
+    style I fill:#e8f5e9,stroke:#2e7d32
+    style C fill:#fce4ec,stroke:#b71c1c
+```
+
+### 10.2 DMAIC × Assessment Toolkit Automation
+
+Each DMAIC phase maps to a **toolkit automation level** — the path from manual delivery to fully automated assessment:
+
+| DMAIC Phase | Manual (Today) | Semi-Auto (Q3 2026) | Fully Auto (Q1 2027) |
+|---|---|---|---|
+| **Define** | Consultant scopes via interviews + config review | Client self-service questionnaire + Azure export parser | Auto-discovery from Azure Resource Graph + tenant config |
+| **Measure** | Consultant scores DAs and WAF pillars from evidence | Agent-assisted scoring with AZALZ-ONT schema validation | `pfc-alz-assess` agent scores autonomously from Azure data |
+| **Analyse** | Manual gap analysis in spreadsheet | Agent generates heatmap + risk register from scored data | Automated root-cause analysis with cross-DA dependency mapping |
+| **Improve** | Consultant writes remediation plan | Agent drafts remediation roadmap from gap register | Auto-generated sprint plan with Velocity Framework sequencing |
+| **Control** | Manual re-assessment on schedule | Azure Policy baseline deployed from assessment findings | Continuous monitoring with automated re-assessment triggers |
+
+### 10.3 DMAIC Phase → Deliverable Mapping
+
+| Phase | Duration | Input | Output Artefact | Automation Target |
+|---|---|---|---|---|
+| **Define** | Day 0–1 | Client engagement brief | Scoped assessment plan, Azure config export, questionnaire responses | Auto-scope from Azure Resource Graph |
+| **Measure** | Day 1–2 | Azure config + questionnaire + CAF data | 8 DA scorecards (1–4) + 5 WAF pillar scores (1–5) + MCSB coverage % | `pfc-alz-assess` agent + AZALZ-ONT |
+| **Analyse** | Day 2 | Scored data | Gap heatmap, risk register (RRR-ONT), cross-DA dependency analysis | Automated gap analysis + RRR mapping |
+| **Improve** | Day 2–3 | Gap analysis | Blueprint recommendation, remediation roadmap, sprint plan, DPIA scope | Auto-generated remediation + sprint plan |
+| **Control** | Ongoing | Assessment baseline | Azure Policy deployment, monitoring dashboard, re-assessment schedule | Continuous compliance monitoring |
+
+### 10.4 DMAIC Fast-Track Principles
+
+1. **Every phase must be independently automatable** — no phase depends on consultant judgement that can't be codified
+2. **Measure before Analyse** — no analysis without scored data; scoring schema (AZALZ-ONT) is the gatekeeper
+3. **Improve generates executable outputs** — not recommendations documents, but sprint plans with Azure-deployable IaC
+4. **Control closes the loop** — every assessment creates a baseline that triggers re-assessment when drift is detected
+5. **DMAIC cycles compress with automation** — manual: 3–5 days; semi-auto: 1–2 days; fully auto: <4 hours
+
+---
+
+## 11. DELTA+ Analytics Maturity Model — Toolkit Intelligence
+
+The **DELTA+ model** (Davenport, Harris & Morison) provides the analytics maturity framework for the assessment toolkit itself. DELTA+ measures how data-driven and analytically mature the toolkit is — progressing from basic scoring to predictive intelligence.
+
+### 11.1 DELTA+ Components Applied to ALZ Assessment Toolkit
+
+| DELTA+ Element | Application to ALZ Assessment Toolkit |
+|---|---|
+| **D — Data** | Assessment telemetry, Azure Resource Graph queries, Policy compliance state, Defender for Cloud scores, historical assessment baselines |
+| **E — Enterprise** | Toolkit integration across PFI instances (W4M, BAIV, AIRL) — shared assessment data model via AZALZ-ONT |
+| **L — Leadership** | CISO/DPO sponsor engagement model — scored findings tied to business risk, not just technical gaps |
+| **T — Targets** | Business outcomes: assessment-to-deployment conversion, time-to-compliance, MCSB coverage improvement over time |
+| **A — Analysts** | Assessment team capability — from consultant-led to agent-assisted to autonomous assessment delivery |
+| **+ Technology** | Azure Resource Graph, AZALZ-ONT schema, `pfc-alz-assess` agent, Supabase assessment store |
+| **+ Analytical Techniques** | Maturity scoring, gap analysis, trend analysis, predictive risk scoring, cross-client benchmarking |
+
+### 11.2 DELTA+ Maturity Stages for the Toolkit
+
+| Stage | Score | Toolkit Capability | Target Date |
+|---|---|---|---|
+| **1 — Analytically Impaired** | 1.0–1.9 | No structured assessment — ad-hoc consultant review, no scoring model | ~~Baseline~~ (passed) |
+| **2 — Localised Analytics** | 2.0–2.9 | AZALZ-ONT scoring model operational; manual data collection; structured but consultant-dependent | **Current (Q1 2026)** |
+| **3 — Analytical Aspirations** | 3.0–3.9 | Semi-automated: agent-assisted scoring, auto-generated heatmaps, standardised questionnaire + Azure export parsing | **Q3 2026** |
+| **4 — Analytical Companies** | 4.0–4.9 | Fully automated DMAIC: autonomous scoring from Azure data, predictive gap analysis, cross-client benchmarking | **Q1 2027** |
+| **5 — Analytical Competitors** | 5.0–5.9 | Prescriptive analytics: toolkit recommends before client asks, continuous monitoring with drift alerts, industry benchmarks | **Q3 2027** |
+
+### 11.3 DELTA+ × DMAIC Integration
+
+The DELTA+ maturity level determines what each DMAIC phase can achieve:
+
+| DMAIC Phase | Stage 2 (Current) | Stage 3 (Semi-Auto) | Stage 4 (Full Auto) | Stage 5 (Prescriptive) |
+|---|---|---|---|---|
+| **Define** | Manual scoping | Self-service questionnaire | Auto-discovery from Azure | Proactive: toolkit detects assessment need |
+| **Measure** | Consultant scoring | Agent-assisted scoring | Autonomous scoring | Continuous measurement |
+| **Analyse** | Manual gap analysis | Auto-generated heatmaps | Predictive risk analysis | Cross-client benchmarking |
+| **Improve** | Written recommendations | Drafted remediation roadmap | Auto-generated sprint + IaC | Prescriptive: "Deploy this now" |
+| **Control** | Scheduled re-assessment | Policy baseline deployment | Automated drift detection | Self-healing governance |
+
+### 11.4 Toolkit Automation Roadmap
+
+```mermaid
+gantt
+    title ALZ Assessment Toolkit — DMAIC + DELTA+ Automation Roadmap
+    dateFormat YYYY-MM
+    axisFormat %b %Y
+
+    section DELTA Stage 2 (Current)
+    AZALZ-ONT scoring model         :done, s2a, 2026-01, 2026-03
+    Manual DMAIC delivery (3-5 days) :active, s2b, 2026-03, 2026-06
+
+    section DELTA Stage 3 (Semi-Auto)
+    Self-service questionnaire       :s3a, 2026-06, 2026-08
+    Agent-assisted scoring           :s3b, 2026-07, 2026-09
+    Auto-generated heatmaps          :s3c, 2026-08, 2026-10
+    DMAIC delivery ≤2 days           :s3d, 2026-09, 2026-12
+
+    section DELTA Stage 4 (Full Auto)
+    Azure Resource Graph auto-discovery :s4a, 2026-10, 2027-01
+    Autonomous pfc-alz-assess agent     :s4b, 2026-11, 2027-02
+    Predictive gap analysis             :s4c, 2027-01, 2027-03
+    DMAIC delivery <4 hours             :s4d, 2027-02, 2027-06
+
+    section DELTA Stage 5 (Prescriptive)
+    Cross-client benchmarking        :s5a, 2027-04, 2027-07
+    Proactive assessment triggers    :s5b, 2027-06, 2027-09
+    Self-healing governance          :s5c, 2027-07, 2027-10
+```
+
+---
+
+## 12. OAA GRC Ontology Series — RCSG-Series Reference
 
 The ALZ Assessment capability draws on the **RCSG-Series** (Risk, Compliance, Security & Governance) ontology family within the OAA ontology library. The RCSG-Series provides the semantic backbone for all GRC-driven assessment, scoring, and compliance evidence generation.
 
@@ -533,7 +691,7 @@ AZALZ-ONT is currently a **placeholder** (status: `placeholder`, all compliance 
 
 ---
 
-## 11. Relationship to Existing Briefs & Docs
+## 13. Relationship to Existing Briefs & Docs
 
 | Document | Relationship |
 |---|---|
@@ -546,7 +704,7 @@ AZALZ-ONT is currently a **placeholder** (status: `placeholder`, all compliance 
 
 ---
 
-## 12. Summary — VE Skill Chain Position
+## 14. Summary — VE Skill Chain Position
 
 | VE Layer | Finding |
 |---|---|
@@ -557,6 +715,8 @@ AZALZ-ONT is currently a **placeholder** (status: `placeholder`, all compliance 
 | **Value Prop** | Pain: ALZ design is ad-hoc, security discovered post-build, privacy absent. AIRL: scored, gated, sprint-ready in 3 days |
 | **Kano** | PbD/SbD gates = Excitement/Moat. CAF→ALZ bridge = Excitement. Design area scoring = Performance. DPIA auto-gen = Excitement |
 | **PMF** | Post-CAF clients at peak intent. Microsoft creates ALZ demand; AIRL captures the pre-deployment assessment gap. Sean Ellis target ≥40% |
+| **DMAIC** | Define→Measure→Analyse→Improve→Control maps 1:1 to assessment delivery. Every phase independently automatable. Manual 3–5 days → semi-auto 1–2 days → fully auto <4 hours |
+| **DELTA+** | Toolkit at Stage 2 (Localised Analytics). Target: Stage 3 (Q3 2026, agent-assisted), Stage 4 (Q1 2027, autonomous), Stage 5 (Q3 2027, prescriptive) |
 
 The structural insight: **WAR scores after deployment; AIRL ALZ Assessment scores before.** This is not a timing difference — it is a fundamentally different value proposition. Pre-deployment assessment prevents findings. Post-deployment review discovers them. Prevention is worth more than discovery, and the PbD/SbD gates make it structurally uncopyable by any partner without an ontology-driven scoring model.
 
