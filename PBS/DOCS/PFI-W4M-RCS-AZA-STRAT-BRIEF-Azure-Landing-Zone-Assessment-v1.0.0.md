@@ -400,7 +400,95 @@ Output Artefacts
 
 ---
 
-## 10. Relationship to Existing Briefs
+## 10. OAA GRC Ontology Series — RCSG-Series Reference
+
+The ALZ Assessment capability draws on the **RCSG-Series** (Risk, Compliance, Security & Governance) ontology family within the OAA ontology library. The RCSG-Series provides the semantic backbone for all GRC-driven assessment, scoring, and compliance evidence generation.
+
+### RCSG-Series Directory Structure
+
+```text
+PBS/ONTOLOGIES/ontology-library/RCSG-Series/
+├── GRC-01-GOV/                              ← Governance Domain
+│   └── GRC-FW-ONT/                          ← GRC Framework Ontology v3.0.0 (hub)
+│       ├── grc-framework-ontology-v3.0.0.json
+│       ├── grc-fw-domain-authorities-v3.0.0.json
+│       ├── grc-fw-mapping-instances-v3.0.0.json
+│       └── Entry-ONT-GRC-FW-001.json
+├── GRC-02-RISK/                             ← Risk Domain
+│   ├── RMF-IS27005-ONT/                     ← ISO 27005 Risk Management Framework
+│   └── ERM-ONT/                             ← Enterprise Risk Management
+├── GRC-03-COMP/                             ← Compliance Domain
+│   ├── GDPR-ONT/                            ← GDPR Regulatory Framework v1.0.0
+│   │   ├── gdpr-regulatory-framework-v1.0.0.json
+│   │   └── Entry-ONT-GDPR-001.json
+│   ├── NCSC-CAF-ONT/                        ← NCSC Cyber Assessment Framework v1.0.0
+│   │   ├── ncsc-caf-ontology-v1.0.0.json
+│   │   └── Entry-ONT-NCSC-CAF-001.json
+│   └── DSPT-ONT/                            ← NHS Data Security & Protection Toolkit v1.0.0
+│       ├── dspt-ontology-v1.0.0.json
+│       └── Entry-ONT-DSPT-001.json
+├── GRC-04-SEC/                              ← Security Domain
+│   ├── MCSB-ONT/                            ← Microsoft Cloud Security Benchmark v2.0.0
+│   │   ├── mcsb-v2.0.0-oaa-v6.json
+│   │   ├── source/v2/MCSB-ONTOLOGY-V2.0.0.json
+│   │   └── Entry-ONT-ALZ-001.json
+│   ├── MCSB2-ONT/                           ← MCSB v2 Extended
+│   │   └── Entry-ONT-MCSB2-001.json
+│   ├── PII-ONT/                             ← PII Governance (Microsoft-native) v3.3.0
+│   │   ├── pii-governance-microsoft-native-v3.3.0.json
+│   │   └── Entry-ONT-PII-001.json
+│   └── AZALZ-ONT/                           ← Azure Landing Zone Assessment (PLACEHOLDER)
+│       └── Entry-ONT-AZALZ-001.json
+├── GRC-05-RES/                              ← Resilience Domain
+├── GRC-06-AI/                               ← AI Governance Domain
+├── RCSG-04-GOV/                             ← RCSG Governance Framework v2.0.0
+│   ├── RCSG-FW-ONT/
+│   │   ├── rcsg-framework-ontology-v2.0.0.json
+│   │   ├── rcsg-fw-mapping-instances-v2.0.0.json
+│   │   └── Cyber-Risk-ONT/                  ← Cyber Risk Domain Ontology
+│   │       ├── cyber-risk-domain-ontology.json
+│   │       ├── cyber-risk-vsom.json
+│   │       ├── cyber-risk-bsc.json
+│   │       └── *.mermaid (vsom-hierarchy, bsc-strategy, vsem-execution)
+│   └── Cyber_Governance_Code_of_Practice.pdf
+└── SECURITY_STANDARDS_REFERENCE_AI_CICD.md
+```
+
+### Ontology Dependency Chain for ALZ Assessment
+
+```text
+GRC-FW-ONT v3.0.0 (hub)
+├── RMF-IS27005-ONT (risk assessment methodology)
+├── ERM-ONT (enterprise risk register)
+├── MCSB-ONT v2.0.0 (Azure security benchmark — 12 control families)
+│   └── AZALZ-ONT (Azure Landing Zone design area assessment) ← PLACEHOLDER
+├── GDPR-ONT (GDPR regulatory mapping → PbD evidence)
+├── NCSC-CAF-ONT (NCSC Cyber Assessment Framework → SbD evidence)
+├── DSPT-ONT (NHS Data Security & Protection Toolkit)
+├── PII-ONT v3.3.0 (PII governance — Purview/Microsoft-native)
+└── RCSG-FW-ONT v2.0.0 (Cyber Governance Code of Practice)
+    └── Cyber-Risk-ONT (cyber risk domain + VSOM + BSC)
+```
+
+### AZALZ-ONT Status
+
+AZALZ-ONT is currently a **placeholder** (status: `placeholder`, all compliance gates: `pending`). The ontology entry defines planned components:
+
+| Component | Description |
+|---|---|
+| **Design Areas** | ALZ design areas: Identity, Network, Management, Platform, Security |
+| **Compliance Checks** | Landing zone compliance assessment criteria |
+| **Governance Policies** | Azure Policy and governance evaluation |
+| **Maturity Levels** | ALZ implementation maturity assessment (Levels 1–5) |
+| **Remediation Guidance** | Gap remediation and improvement recommendations |
+
+**Dependencies:** `Entry-ONT-ALZ-001` (MCSB-ONT), `Entry-ONT-MCSB2-001` (MCSB v2 Extended)
+
+**Priority:** AZALZ-ONT must be promoted from placeholder to v1.0.0 as a prerequisite for the `pfc-alz-assess` skill (KR1.1). This is a blocking dependency for ALZ Assessment productisation.
+
+---
+
+## 11. Relationship to Existing Briefs & Docs
 
 | Document | Relationship |
 |---|---|
@@ -412,7 +500,7 @@ Output Artefacts
 
 ---
 
-## 11. Summary — VE Skill Chain Position
+## 12. Summary — VE Skill Chain Position
 
 | VE Layer | Finding |
 |---|---|
