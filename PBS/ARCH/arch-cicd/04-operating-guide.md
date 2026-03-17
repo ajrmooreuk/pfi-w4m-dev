@@ -1,8 +1,8 @@
 # ARCH-CICD-004: Operating Guide — Hub-and-Spoke CI/CD Platform
 
-**Version:** 1.3.1
-**Date:** 2026-03-17 (cross-reference to ARCH-CICD-005 added)
-**Status:** Draft (updated with PAT governance & drift detection — F61.5)
+**Version:** 1.4.0
+**Date:** 2026-03-17 (PROJECT_PAT setup added — F61.29; status promoted to Active)
+**Status:** Active
 **Parent:** ARCH-CICD-001 (Hub-and-Spoke Proposal), ARCH-CICD-002 (Promotion Pipeline Detail)
 **Epic:** Epic 61 (#947) → Epic 31 (#394) → S31.6.1 (#431)
 **See also:** ARCH-CICD-005 (`05-github-pm-automation.md`) — GitHub Projects governance, instance hierarchy, auto-add routing, project creation rule
@@ -344,6 +344,58 @@ gh workflow run pat-drift-detection.yml --repo ajrmooreuk/Azlan-EA-AAA
 # Check results
 gh run list --workflow pat-drift-detection.yml --repo ajrmooreuk/Azlan-EA-AAA --limit 1
 ```
+
+---
+
+## 7A. PROJECT_PAT Setup
+
+`PROJECT_PAT` is separate from `PROMOTION_PAT`. It is required by `auto-add-to-projects.yml` to write to GitHub Projects v2 via GraphQL. See ARCH-CICD-003 glossary for full PAT definitions.
+
+### 7A.1 Creating PROJECT_PAT
+
+1. Go to [github.com/settings/tokens/new](https://github.com/settings/tokens/new) (Classic token)
+2. Set **Note:** `PFC-PROJECT-PAT`
+3. Set **Expiration:** No expiration (or 1 year)
+4. Select scope: **`project`** only (includes `read:project` + `write:project`)
+5. Click **Generate token** and copy the `ghp_...` value
+
+> **Classic only.** Fine-grained PATs have inconsistent Projects v2 GraphQL support. Do not use fine-grained for PROJECT_PAT. Classic tokens are account-wide — no repo restriction needed.
+
+### 7A.2 Setting PROJECT_PAT on PFI Dev Repos
+
+`PROJECT_PAT` is stored on **PFI dev repos only** (not test/prod — auto-add only fires on issue open in dev repos).
+
+```bash
+for repo in ajrmooreuk/pfi-airl-caf-aza-dev ajrmooreuk/pfi-w4m-dev ajrmooreuk/pfi-baiv-aiv-dev ajrmooreuk/pfi-w4m-rcs-dev; do
+  echo "Setting PROJECT_PAT on $repo..."
+  gh secret set PROJECT_PAT --repo $repo
+done
+# Paste token once per prompt
+```
+
+Or on a single repo:
+
+```bash
+gh secret set PROJECT_PAT --repo ajrmooreuk/pfi-airl-caf-aza-dev
+```
+
+### 7A.3 Verifying PROJECT_PAT
+
+```bash
+for repo in pfi-airl-caf-aza-dev pfi-w4m-dev pfi-baiv-aiv-dev pfi-w4m-rcs-dev; do
+  echo -n "$repo: "
+  gh secret list --repo ajrmooreuk/$repo | grep "PROJECT_PAT" || echo "MISSING"
+done
+```
+
+### Current Status (2026-03-17)
+
+| Repo | PROJECT_PAT |
+| --- | --- |
+| `pfi-airl-caf-aza-dev` | ✓ Set |
+| `pfi-w4m-dev` | ✓ Set |
+| `pfi-baiv-aiv-dev` | ✓ Set |
+| `pfi-w4m-rcs-dev` | ✓ Set |
 
 ---
 
