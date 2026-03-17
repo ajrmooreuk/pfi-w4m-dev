@@ -15,9 +15,9 @@ Read in order for a complete picture. Each document has a distinct scope.
 | --- | --- | --- | --- | --- |
 | 001 | [01-hub-and-spoke-proposal.md](01-hub-and-spoke-proposal.md) | 1.0.0 | Decision record — frozen | Architecture decision: hub-and-spoke model, options evaluated, recommendation |
 | 002 | [02-promotion-pipeline-detail.md](02-promotion-pipeline-detail.md) | 1.2.0 | Implemented | Promotion mechanics: dev→test→prod, convention manifest, sync-to-live |
-| 003 | [03-glossary.md](03-glossary.md) | 1.1.0 | Active | All terms: platform, CI/CD, instance hierarchy, GH PM automation, backup |
-| 004 | [04-operating-guide.md](04-operating-guide.md) | 1.3.1 | Active | Day-to-day operations: releases, PAT management, drift detection, troubleshooting |
-| 005 | [05-github-pm-automation.md](05-github-pm-automation.md) | 1.0.0 | Active | GitHub Projects governance: instance hierarchy, two-project model, auto-add routing, backup cascade |
+| 003 | [03-glossary.md](03-glossary.md) | 1.3.0 | Active | All terms: platform, CI/CD, instance hierarchy, GH PM automation, backup, PAT types |
+| 004 | [04-operating-guide.md](04-operating-guide.md) | 1.4.0 | Active | Day-to-day operations: releases, PAT management (PROMOTION + PROJECT), drift detection, troubleshooting |
+| 005 | [05-github-pm-automation.md](05-github-pm-automation.md) | 1.1.0 | Active | GitHub Projects governance: instance hierarchy, two-project model, auto-add routing, stub deployment status |
 
 ---
 
@@ -45,6 +45,7 @@ Supporting artefacts from specific feature deliveries.
 | [TEST-PLAN-F31.9-sealed-skills.md](TEST-PLAN-F31.9-sealed-skills.md) | F31.9 [#819](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/819) | Test plan: sealed skill distribution |
 | [RELEASE-BULLETIN-F31.9-sealed-skills.md](RELEASE-BULLETIN-F31.9-sealed-skills.md) | F31.9 [#819](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/819) | Release bulletin: sealed skill distribution |
 | [RELEASE-BULLETIN-F61.5-PAT-Governance.md](RELEASE-BULLETIN-F61.5-PAT-Governance.md) | F61.5 [#952](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/952) | Release bulletin: PAT governance & drift detection |
+| [RELEASE-BULLETIN-F61.29-PFI-Project-Board-Automation.md](RELEASE-BULLETIN-F61.29-PFI-Project-Board-Automation.md) | F61.29 [#1241](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1241) | Release bulletin: PFI project board automation, workflow stubs, registry hierarchy |
 
 ---
 
@@ -77,7 +78,7 @@ Decision documents that govern this architecture set. Implementation detail is i
 
 | Feature | Issue | Scope | Docs |
 | --- | --- | --- | --- |
-| F61.29: PFI Project Board Automation | [#1241](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1241) | Auto-add cascade, two-project split, workflow stubs, registry hierarchy fields | 005 |
+| F61.29: PFI Project Board Automation | [#1241](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1241) | **COMPLETE** — auto-add + stubs deployed to all 4 active PFI repos; registry hierarchy fields set; guard-core follow-up [#1264](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1264) | 005, RELEASE-BULLETIN |
 | F61.24: URG-Driven Backup Scope Registry | [#1206](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1206) | Backup auto-enrolment from instance registry — no hardcoded lists | 005 |
 | F61.15: GitHub Resilience & Cross-Account Backup | [#1155](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1155) | GitLab mirror, launchd, PFI backup accounts, client instance DR | 005 |
 | F61.18: CI/CD Process Audit & Control | [#1178](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1178) | Cross-repo workflow governance, promotion cascade tracking | 004 |
