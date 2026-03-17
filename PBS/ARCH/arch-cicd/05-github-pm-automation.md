@@ -1,11 +1,11 @@
 # ARCH-CICD-005: GitHub PM Automation — Project Governance, Instance Hierarchy & Auto-Add Cascade
 
-**Version:** 1.0.0
-**Date:** 2026-03-17
+**Version:** 1.1.0
+**Date:** 2026-03-17 (F61.29 complete — all 4 active PFI repos deployed; guard-core follow-up #1264)
 **Status:** Active
 **Parent:** ARCH-CICD-001 (Hub-and-Spoke Proposal)
 **Epic:** Epic 61: PFC-ARCH-CICD [#947](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/947)
-**Feature:** F61.29 [#1241](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1241)
+**Feature:** F61.29 [#1241](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1241) — **COMPLETE**
 **Brief:** [PFC-CICD-BRIEF-Workflow-Governance-Project-Automation-Cascade-v1.0.0](../../STRATEGY/PFC-CICD-BRIEF-Workflow-Governance-Project-Automation-Cascade-v1.0.0.md)
 
 ---
@@ -238,13 +238,24 @@ jobs:
     secrets: inherit
 ```
 
-### 6.2 Workflows That Stay in PFI Repos
+### 6.2 Deployment Status (2026-03-17)
+
+All four active PFI dev repos have stubs in place:
+
+| Repo | `validate-issue-naming` | `enforce-registry-link` | `validate-labels` | `auto-add-to-projects` |
+| --- | --- | --- | --- | --- |
+| `pfi-airl-caf-aza-dev` | ✓ stub | ✓ stub | ✓ stub | ✓ deployed |
+| `pfi-w4m-dev` | ✓ stub | ✓ stub | ✓ stub | ✓ deployed |
+| `pfi-baiv-aiv-dev` | ✓ stub | ✓ stub | ✓ stub | ✓ deployed |
+| `pfi-w4m-rcs-dev` | ✓ stub | ✓ stub | ✓ stub | ✓ deployed |
+
+### 6.3 Workflows That Stay in PFI Repos
 
 | Workflow | Reason |
-|---|---|
+| --- | --- |
 | `promote.yml` | References PFI-specific repo names, secrets, and `parent_pfi` gate |
-| `guard-core.yml` | PFI-specific sealed core paths |
-| `auto-add-to-projects.yml` | Contains baked-in PFI-specific project node IDs |
+| `guard-core.yml` | Hub does not yet expose `workflow_call` — follow-up tracked [#1264](https://github.com/ajrmooreuk/Azlan-EA-AAA/issues/1264) |
+| `auto-add-to-projects.yml` | Contains baked-in PFI-specific project node IDs — local by design |
 
 ---
 
