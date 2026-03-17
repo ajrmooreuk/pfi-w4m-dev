@@ -1,7 +1,7 @@
 # ARCH-CICD-003: Glossary — CI/CD & Multi-Instance Terms
 
-**Version:** 1.1.0
-**Date:** 2026-03-17 (updated — instance hierarchy, project governance, backup terms added)
+**Version:** 1.2.0
+**Date:** 2026-03-17 (updated — role names formalised: Strategy Analysis (VE), Security Architect)
 
 ---
 
@@ -41,6 +41,7 @@
 | **workflow_call stub** | A thin PFI-repo workflow file that delegates execution to the hub's canonical workflow via `workflow_call`. Eliminates replication drift. |
 | **engineering_project_id** | Registry field — the `PVT_...` GitHub Projects v2 node ID for the Engineering project. Written by `setup-repo` skill. |
 | **product_project_id** | Registry field — the `PVT_...` GitHub Projects v2 node ID for the Product project. Written by `setup-repo` skill. |
+| **PVT node ID** | The globally unique identifier assigned by GitHub to every Projects v2 board, prefixed `PVT_`. Used in GraphQL API calls to read/write project fields and items. Not visible in the GitHub UI — obtained via `gh api graphql`. Required by `auto-add-to-projects.yml` and `set-pbs-id.yml` to route issues to the correct board. |
 
 ## Backup & Resilience Terms
 
@@ -106,6 +107,22 @@
 | **OAA** | Ontology Architect Agent — the AI agent governance framework (currently v6.1) that defines how ontologies are authored, validated, and composed. |
 | **Claude Code Skills** | Slash commands (`/create-epic`, `/create-feature`, `/create-story`, `/review-hierarchy`, `/setup-repo`, `/setup-project-board`) packaged as a Claude Code plugin. |
 | **Agent Prompt** | System prompt that configures an AI agent's behaviour, domain knowledge, and tool access. Maintained in PFC-Core and distributed to instances. |
+
+## Platform Roles
+
+| Role | Code | Full Name | Scope |
+|------|------|-----------|-------|
+| **Strategy Analysis** | VE | Strategy Analysis (VE) | Discovers, scopes, and models value opportunities. Owns VSOM, OKR, QVF, VP, Kano, PMF. Primary consumer of platform capabilities. |
+| **Design Director** | DD | Design Director (DD) | Owns the design system, component architecture, and all visual/interactive output. Builds via DSY skill chain and App Skeleton. |
+| **Process Engineer** | PE | Process Engineer (PE) | Owns technical architecture, integration contracts, delivery pipeline, and PPM. Arbitrates RBAC boundary conflicts. |
+| **Context Architect** | FDN | Context Architect (FDN) | Owns infrastructure, security context, data sovereignty, and adaptive onboarding. Provides platform-layer context to all other roles. |
+| **Compliance Authority** | CA | Compliance Authority (CA) | Owns compliance surface detection, audit boundaries, and regulatory requirements (GRC, DSPT, CAF, GDPR). Read-only on security surfaces — cannot sign SEC-DT-06. |
+| **Security Architect** | SecArch | Security Architect | Owns security architecture decisions (SA-DT), threat model sign-off, and SEC-DT-06 dual sign-off authority. Independent of the 5 core roles — distinct authority for security gate decisions. Required for promote-to-prod (tdd-gate.yml G7). |
+| **TDD Expert** | TDD-E | TDD Expert | HITL authority over the TDD-DT pipeline. Signs TDD-DT-07 gate and promote-to-prod PRs jointly with Security Architect. Eligible: PE or CA standing minimum. Cannot be automated or bypassed. |
+
+> **Note on naming:** The VE role is formally **Strategy Analysis (VE)** — not "Value Engineer". The code `VE` is retained for brevity in filenames, skill IDs, and registry entries. All role-facing documentation must use the full name.
+
+---
 
 ## Licence Terms
 
