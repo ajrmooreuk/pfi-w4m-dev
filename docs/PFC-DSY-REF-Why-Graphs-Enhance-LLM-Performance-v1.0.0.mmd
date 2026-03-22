@@ -1,0 +1,129 @@
+---
+title: Why Graphs Enhance LLM Performance — Agent Builder Primer
+---
+
+graph TD
+    %% ── CORE PROBLEM ──────────────────────────────────────────
+    subgraph PROBLEM["THE CORE PROBLEM"]
+        direction TB
+        P1["LLMs are stateless text predictors"]
+        P2["No built-in memory, structure, or relationship reasoning"]
+        P3["Every prompt starts from scratch"]
+        P1 --> P2 --> P3
+    end
+
+    subgraph BREAKS["Breaks Down When An Agent Needs To..."]
+        B1["Navigate complex interconnected domains"]
+        B2["Enforce constraints & dependencies"]
+        B3["Stay consistent across action chains"]
+        B4["Know what it doesn't know"]
+    end
+
+    PROBLEM --> BREAKS
+
+    %% ── WHAT GRAPHS GIVE YOU ──────────────────────────────────
+    subgraph GRAPH_DEF["WHAT IS A GRAPH?"]
+        G0["Nodes — things\nEdges — relationships\nThat's it."]
+    end
+
+    BREAKS -->|"Graphs solve this"| GRAPH_DEF
+
+    GRAPH_DEF --> FIVE
+
+    subgraph FIVE["5 WAYS GRAPHS ENHANCE LLM PERFORMANCE"]
+        direction TB
+
+        subgraph G1["1 · Structured Context — Not Token Soup"]
+            direction LR
+            G1A["WITHOUT graph:\nFlat text stuffed into prompt\nLLM guesses relationships"]
+            G1B["WITH graph:\nExact subgraph retrieved\nExplicit triples"]
+            G1C["User --owns--> Project\nProject --contains--> Task\nTask --blocked-by--> Task"]
+            G1A -->|"vs"| G1B --> G1C
+        end
+
+        subgraph G2["2 · Precision Retrieval — Not Just Similarity"]
+            direction LR
+            G2A["Vector search:\n'Find docs about auth'\nReturns anything mentioning auth"]
+            G2B["Graph traversal:\n'Find all services depending on auth'\nReturns exact dependency chain"]
+            G2C["For agents making decisions\nyou want FACTS not VIBES"]
+            G2A -->|"vs"| G2B --> G2C
+        end
+
+        subgraph G3["3 · Bounded Reasoning"]
+            direction LR
+            G3A["Unbounded = hallucination"]
+            G3B["Graph constrains\nvalid next steps"]
+            G3C["order_placed →\npayment_pending | cancelled\nPick from known set"]
+            G3A --> G3B --> G3C
+        end
+
+        subgraph G4["4 · Multi-Hop Reasoning Without CoT Gymnastics"]
+            direction LR
+            G4A["'Who manages the team\nthat owns the service\nwith most incidents?'"]
+            G4B["Traverse programmatically:\nIncident → Service\n→ Team → Manager"]
+            G4C["Hand the LLM\nthe answer path\nNot the puzzle"]
+            G4A --> G4B --> G4C
+        end
+
+        subgraph G5["5 · Persistent, Evolving Memory"]
+            direction LR
+            G5A["Episodic\nwhat happened\nevent nodes + temporal edges"]
+            G5B["Semantic\nwhat things mean\nconcept nodes + relationship edges"]
+            G5C["Procedural\nhow to do things\nworkflow nodes + sequence edges"]
+            G5A ~~~ G5B ~~~ G5C
+        end
+
+        G1 ~~~ G2 ~~~ G3 ~~~ G4 ~~~ G5
+    end
+
+    %% ── AGENT-SPECIFIC PAYOFF ─────────────────────────────────
+    subgraph AGENT["THE AGENT-SPECIFIC PAYOFF"]
+        direction TB
+        A1["Tool Selection\nGraph encodes which tools\napply to which states"]
+        A2["Planning\nGraph traversal generates\nvalid action sequences"]
+        A3["Guardrails\nGraph constraints prevent\ninvalid transitions"]
+        A4["Context Assembly\nSubgraph extraction gives LLM\nexactly what it needs"]
+        A5["Explainability\nThe traversal path IS\nthe reasoning trace"]
+        A1 ~~~ A2 ~~~ A3 ~~~ A4 ~~~ A5
+    end
+
+    FIVE --> AGENT
+
+    %% ── PRACTICAL STARTING POINTS ─────────────────────────────
+    subgraph START["PRACTICAL STARTING POINTS"]
+        direction TB
+        S1["1. JSON adjacency lists\nNodes + edges as plain objects\nGood enough for prototypes"]
+        S2["2. Use graph to build prompts\nTraverse → serialize subgraph\n→ inject into system prompt"]
+        S3["3. Let LLM update the graph\nTool calls that add/modify\nnodes and edges"]
+        S1 --> S2 --> S3
+    end
+
+    AGENT --> START
+
+    subgraph GRAD["WHEN TO GRADUATE TO A GRAPH DB"]
+        direction TB
+        GD1["Node count exceeds\nwhat fits in a prompt"]
+        GD2["Complex multi-hop queries\nneeded at low latency"]
+        GD1 ~~~ GD2
+    end
+
+    START --> GRAD
+
+    %% ── ONE-LINER ─────────────────────────────────────────────
+    SUMMARY["Graphs turn the LLM from a TEXT GUESSER\ninto a STRUCTURE-AWARE REASONER\nby replacing 'figure out the relationships from prose'\nwith 'here are the relationships — now decide'"]
+
+    GRAD --> SUMMARY
+
+    %% ── STYLES ────────────────────────────────────────────────
+    classDef problem fill:#2d1b2e,stroke:#e74c3c,color:#f8d7da
+    classDef graph fill:#1b2d2e,stroke:#1abc9c,color:#d1ecf1
+    classDef benefit fill:#1b2e1f,stroke:#2ecc71,color:#d4edda
+    classDef agent fill:#2e2b1b,stroke:#f39c12,color:#fff3cd
+    classDef start fill:#1b1f2e,stroke:#3498db,color:#cce5ff
+    classDef summary fill:#0d1117,stroke:#a78bfa,color:#e0d4fc,font-weight:bold
+
+    class P1,P2,P3,B1,B2,B3,B4 problem
+    class G0,G1A,G1B,G1C,G2A,G2B,G2C,G3A,G3B,G3C,G4A,G4B,G4C,G5A,G5B,G5C graph
+    class A1,A2,A3,A4,A5 agent
+    class S1,S2,S3,GD1,GD2 start
+    class SUMMARY summary
