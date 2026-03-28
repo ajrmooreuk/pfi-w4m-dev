@@ -6,8 +6,15 @@
 | **Product** | PFI-W4M-RCS-AZA (Azure Landing Zone Assessment) |
 | **Owner** | Amanda Moore |
 | **Date** | 2026-03-27 |
-| **Status** | For Review |
+| **Status** | **EXECUTED — Phase 1 & 2 Complete** |
+| **Product Home** | **`ajrmooreuk/pfi-w4m-rcs-dev`** (migrated from pfi-w4m-dev 2026-03-28) |
 | **Purpose** | Strategy-led plan to migrate AZA-ALZ into W4M-RCS repo, stand up the EFS Product Board, move to Testing, and iterate to live |
+
+> **Migration Note (2026-03-28):** Product migrated to `pfi-w4m-rcs-dev` — the dedicated W4M-RCS triad repo. All issues transferred, docs copied, HCR components + test data in place. Epic 3 (#18) + 15 features + 2 standing issues live in Project #78.
+> - Repo: https://github.com/ajrmooreuk/pfi-w4m-rcs-dev
+> - Epic 3: https://github.com/ajrmooreuk/pfi-w4m-rcs-dev/issues/18
+> - Project #78 (Product): https://github.com/users/ajrmooreuk/projects/78
+> - Project #77 (Engineering): https://github.com/users/ajrmooreuk/projects/77
 
 ---
 
@@ -17,7 +24,7 @@ AZA-ALZ-HCR is a **built product in test-data mode** — 27/27 skills active, 49
 
 This plan delivers three things:
 
-1. **Migrate** — Move AZA-ALZ product management into pfi-w4m-dev with EFS-governed Product Board
+1. **Migrate** — Move AZA-ALZ product management into `pfi-w4m-rcs-dev` with EFS-governed Product Board
 2. **Test** — Promote to pfi-w4m-test with structured acceptance testing against test data
 3. **Iterate** — Wire live Azure MCP (Epic 85), validate against real tenant, ship
 
