@@ -267,4 +267,4 @@ MACRO ANALYSIS Summary: {orgName} ({instance-code})
 |---------|-------------|
 | `JP-MAC-001` | `macro:PESTELFactor.informs` → `vsom:Strategy` (consumed by pfc-vsom) |
 | `JP-MAC-002` | `macro:Scenario.constrains` → `vsom:Vision` (vision stress-testing) |
-| `JP-MAC-003` | `macro:PESTELFactor` → `ind:SWOTFactor` (PESTEL external factors feed SWOT O/T) |
+| `JP-MAC-003` | `macro:PESTELFactor` → `ind-sa:SWOTFactor` (PESTEL external factors feed SWOT O/T) |

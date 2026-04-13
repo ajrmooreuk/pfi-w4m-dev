@@ -16,6 +16,40 @@ Build a complete Value Proposition for a given Ideal Customer Profile (ICP), gro
 
 Path: HG-01 PARTIAL (5.1) → HG-03 FAIL (3.5) → `SKILL_STANDALONE`
 
+## Scope Flag
+
+`--scope problems|full` — Controls the breadth of the VP canvas produced.
+
+### `--scope full` (default)
+
+Complete Value Proposition canvas covering all 8 sections: Context Loading, ICP Definition, Problem Discovery, Solution Design, Benefit Articulation, VP Statement + RRR Alignment, Output Assembly, and Validation. Produces the full `vp:ValuePropositionInstance` JSON-LD with all 15 VP-ONT entity types.
+
+**Use when:** Running pfc-vp for the first time for an instance, building a complete VP for a new ICP, or refreshing the full proposition after strategic changes.
+
+**Output:** `ve-pipeline-output/07-vp-{instance}-{icp}.jsonld` (complete VP instance)
+
+### `--scope problems`
+
+Focused Problem-Risk alignment mode. Runs only Sections 1, 3, and the VP-RRR alignment portion of Section 6. Skips ICP Definition (S2), Solution Design (S4), Benefit Articulation (S5), and full VP Statement generation.
+
+**Workflow in problems scope:**
+
+1. **Context Loading (S1)** — Load ORG-CONTEXT, VSOM, and RRR instance data as normal
+2. **Problem Discovery (S3)** — Full problem discovery with pain points, severity, frequency, and hierarchy
+3. **Problem→Risk Alignment** — For each discovered problem, create or link the corresponding `rrr:Risk`:
+   - Risk likelihood derived from problem frequency
+   - Risk impact derived from problem severity + marketSizeImpact
+   - Risk category mapped from problem category (functional→operational, economic→financial, emotional→reputational, social→strategic)
+4. **Output problem-risk report** — `ve-pipeline-output/07-vp-{instance}-problems-{date}.jsonld`
+
+**Quality Gates in problems scope:**
+
+- G1: Context loaded (same as full)
+- G3: Problems discovered with pain points (same as full)
+- G4-PARTIAL: Every `vp:Problem` has a corresponding `rrr:Risk` (Problem→Risk subset of full G4)
+
+**Use when:** Called by pfc-dmaic-ve in the Measure phase (`--scope problems`) to identify and risk-align the problem landscape before the full Improve phase runs the complete VP canvas (`--scope full`).
+
 ## What You Do
 
 When the user invokes `/azlan-github-workflow:pfc-vp`, follow these 8 sections in order. This skill has 7 quality gates including the **mandatory zero-tolerance VP-RRR alignment gate (G4)**.
@@ -345,3 +379,20 @@ VALUE PROPOSITION Summary: {orgName} ({instance-code})
 | `JP-VP-008` | rrr:ExecutiveRole ↔ vp:RoleBasedICP.roleRef |
 | `JP-VP-009` | Problem roll-up: Operational → Tactical → Strategic |
 | `JP-VP-010` | RACI-VP Activity Chain |
+
+## Wiki Hook
+
+**Standard:** F17.11 — Epic 17 (pfc-dev #86) Research Wiki integration.
+
+**Trigger:** On successful skill completion that materially changes a `vp:ValueProposition` (Problem/Solution/Benefit triad, RRR mapping, Kano classification, ICP, or VP scoring).
+
+**Action:** Emit a wiki update intent for `pfc-wiki-ingest` to refresh the **VP section** of the corresponding entity page in `PBS/RESEARCH/entities/`. The VP section is the canonical Voice-of-Evidence input for VE-QVF.
+
+**Payload contract:**
+- `entity`: target entity slug (organisation, product, or persona scope)
+- `source`: this skill invocation id (UACL hash)
+- `change_type`: `created` | `updated`
+- `vp_score`: numeric VP score
+- `affected_sections`: must include `vp` plus any of `problem`, `solution`, `benefit`, `kano`, `icp`, `rrr-mapping`
+
+**Downstream:** `pfc-wiki-ingest` (SKL-233) consumes the intent → `pfc-wiki-compile` (SKL-236) refreshes `_index.md` and cross-refs. VE-QVF reads compiled VP sections as Voice of Evidence.

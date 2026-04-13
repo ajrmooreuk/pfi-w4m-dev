@@ -1,36 +1,67 @@
 ---
 name: setup-project-board
-description: Creates or configures a GitHub Projects v2 board with the standard Azlan workflow fields and views. Use when setting up project tracking.
-argument-hint: "[project-title] [--owner login]"
+description: Creates Engineering and Product GitHub Projects v2 boards for a PFI dev repo. Outputs PVT node IDs for registry. Hub admin only — requires PROJECT_PAT.
+argument-hint: "[--owner login] [--repo owner/repo] [--pfi-id PFI-ID] [--type engineering|product|both]"
 user-invocable: true
 allowed-tools: "Bash(gh *),Read"
 ---
 
 # Setup Project Board
 
-Create or configure a GitHub Projects v2 board with the standard Azlan workflow fields.
+Create Engineering and/or Product GitHub Projects v2 boards for a PFI instance, capture PVT node IDs, and register them in `ont-registry-index.json`.
+
+> **Hub admin only.** Requires `PROJECT_PAT` (classic PAT, `project` scope). PFI collaborators cannot run this skill — they do not hold PROJECT_PAT. See ARCH-CICD-003 glossary for PAT definitions.
 
 ## What You Do
 
 When the user invokes `/azlan-github-workflow:setup-project-board`, follow these steps:
 
 ### 1. Parse Arguments
-- `$0` = project title (required)
+
 - `--owner` = GitHub user or org login (required)
-- If not provided, ask the user
+- `--repo` = `owner/repo` to link the board to (required)
+- `--pfi-id` = registry `@id` for this instance (e.g. `PFI-AIRL-CAF-AZA`) — required to write back to registry
+- `--type` = `engineering`, `product`, or `both` (default: `both`)
 
-### 2. Check for Existing Project
+If not provided, ask the user.
+
+### 2. Create Boards
+
+For each board type requested:
+
 ```bash
-gh project list --owner OWNER --format json --jq ".projects[] | select(.title==\"TITLE\") | .number"
+gh project create --owner OWNER --title "PFI [INSTANCE] Engineering" --format json
+gh project create --owner OWNER --title "PFI [INSTANCE] Product" --format json
 ```
 
-If found, use existing. Otherwise create:
+**Engineering board** — tracks CI/CD, scaffold, devops, infrastructure, operational epics. Hub admin = Admin; collaborators = Read.
+**Product board** — tracks epics, features, stories, RAID, briefs. Collaborators = Write.
+
+### 3. Capture PVT Node ID (CRITICAL)
+
+After each board is created, extract its `PVT_...` node ID via GraphQL. This is NOT shown in the GitHub UI — it must be captured now and stored in the registry.
+
 ```bash
-gh project create --owner OWNER --title "TITLE" --format json --jq '.number'
+gh api graphql -f query='
+  query($owner: String!, $number: Int!) {
+    user(login: $owner) {
+      projectV2(number: $number) {
+        id
+        title
+      }
+    }
+  }' -f owner="OWNER" -F number=PROJECT_NUMBER \
+  --jq '.data.user.projectV2.id'
 ```
 
-### 3. Create Standard Fields
-Add each field if it doesn't already exist:
+Record both IDs immediately:
+
+- `engineering_project_id: PVT_...`
+- `product_project_id: PVT_...`
+
+### 4. Add Standard Fields
+
+Add each field to both boards if it doesn't already exist:
 
 | Field | Type | Options |
 |-------|------|---------|
@@ -52,12 +83,33 @@ gh project field-create NUMBER --owner OWNER --name "PBS ID" --data-type TEXT
 gh project field-create NUMBER --owner OWNER --name "WBS Code" --data-type TEXT
 ```
 
-### 4. Link Repository (if in a repo context)
+### 5. Link Repository
+
 ```bash
 gh project link NUMBER --owner OWNER --repo OWNER/REPO
 ```
 
-### 5. Report
-- Project URL
-- Fields created vs skipped
-- Recommended views to create manually (Epic Progress, PBS Delivery, Registry Coverage)
+### 6. Write PVT Node IDs to Registry
+
+Update `PBS/ONTOLOGIES/ontology-library/ont-registry-index.json` in `Azlan-EA-AAA` — add `engineering_project_id` and `product_project_id` to the PFI entry matching `--pfi-id`:
+
+```json
+"engineering_project_id": "PVT_...",
+"product_project_id": "PVT_..."
+```
+
+Commit with message: `feat(registry): add project board PVT IDs for [PFI-ID] [setup-project-board]`
+
+### 7. Report
+
+Output a summary table:
+
+| Item | Value |
+| --- | --- |
+| Engineering board | URL + PVT node ID |
+| Product board | URL + PVT node ID |
+| Registry updated | ✓ / ✗ |
+| Fields created | Count |
+| Repo linked | owner/repo |
+
+Also remind: PVT node IDs must be baked into `auto-add-to-projects.yml` in the PFI dev repo — run `/setup-repo --engineering-project-id PVT_... --product-project-id PVT_...` or update the workflow file directly.

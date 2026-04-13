@@ -1,14 +1,14 @@
 ---
 name: pfc-oaa-v7
-description: Ontology Architect Agent v7.1 — creates, converts, and validates OAA v7.0.0 compliant ontologies with full quality gates G1-G23, competency questions, namespace governance, and registry integration.
-argument-hint: "[workflow A|B|C] [ontology code or domain name]"
+description: Ontology Architect Agent v7.2 — creates, converts, validates, and migrates/removes OAA v7.0.0 compliant ontologies with full quality gates G1-G23, competency questions, namespace governance, and registry integration. Workflow D adds entity lifecycle operations.
+argument-hint: "[workflow A|B|C|D] [ontology code or domain name]"
 user-invocable: true
 allowed-tools: "Bash(gh *),Read,Grep,Glob,Write"
 ---
 
-# PFC-OAA-V7: Ontology Architect Agent Skill v7.1
+# PFC-OAA-V7: Ontology Architect Agent Skill v7.2
 
-Systematically create, convert, and validate production-grade ontologies following OAA v7.0.0 standards. This skill wraps the OAA v7 system prompt (`PBS/AGENTS/oaa-v7/system-prompt.md`) as an executable Claude Code skill with structured workflow routing, quality gate enforcement, and registry integration.
+Systematically create, convert, validate, and manage entity lifecycle for production-grade ontologies following OAA v7.0.0 standards. This skill wraps the OAA v7 system prompt (`PBS/AGENTS/oaa-v7/system-prompt.md`) as an executable Claude Code skill with structured workflow routing, quality gate enforcement, and registry integration.
 
 ## Dtree Classification
 
@@ -18,7 +18,7 @@ Path: HG-01 PARTIAL (6.1) → HG-03 FAIL (4.0) → `SKILL_STANDALONE`
 
 ## What You Do
 
-When the user invokes `/azlan-github-workflow:pfc-oaa-v7`, determine which workflow to run (A, B, or C), then execute the corresponding section sequence. All workflows end with artifact generation and registry integration.
+When the user invokes `/azlan-github-workflow:pfc-oaa-v7`, determine which workflow to run (A, B, C, or D), then execute the corresponding section sequence. All workflows end with artifact generation and registry integration.
 
 ---
 
@@ -31,6 +31,7 @@ Determine the workflow from the user's argument or ask:
 | `A {domain}` | **New Creation** | Create a new ontology from scratch |
 | `B {ONT-CODE}` | **v6 → v7 Conversion** | Convert an existing v6 ontology to v7 |
 | `C {ONT-CODE}` | **Interactive Validation** | Validate an existing ontology against v7 gates |
+| `D {SOURCE-ONT} {TARGET-ONT} {entity1,entity2,...}` | **Entity Migrate/Remove** | Migrate entities between ontologies, deprecate, or remove |
 
 If no workflow letter is provided, infer from context:
 - If the argument matches an existing ontology code in the registry → Workflow B or C
@@ -281,6 +282,195 @@ vp:Problem  → rrr:Risk         (problems are risks)
 vp:Solution → rrr:Requirement  (solutions are requirements)
 vp:Benefit  → rrr:Result       (benefits are results)
 ```
+
+---
+
+### Section 9: Workflow D — Entity Migrate / Deprecate / Remove
+
+**New in v7.2.** Workflow D handles entity lifecycle operations that Workflows A/B/C cannot — moving entities between ontologies, deprecating entities, or removing them entirely.
+
+When Workflow D is selected, determine the sub-operation:
+
+| Sub-Op | Argument | Description |
+|--------|----------|-------------|
+| `D1` | `D {SOURCE-ONT} {TARGET-ONT} {entities}` | **Migrate** entities from source to target ontology |
+| `D2` | `D deprecate {ONT-CODE} {entities}` | **Deprecate** entities within an ontology |
+| `D3` | `D remove {ONT-CODE} {entities}` | **Remove** entities from an ontology |
+
+---
+
+#### D1: Entity Migration (between ontologies)
+
+**Step D1.1 — Safety Scan (REQ-OAA-D10)**
+
+Before any modification, scan for references to the entities being migrated:
+
+```bash
+# Scan SKILL.md files for entity references
+Grep "{source-prefix}:{EntityName}" azlan-github-workflow/skills/ --include="*.md"
+
+# Scan ProcessPath JSONLDs for entity references
+Grep "{source-prefix}:{EntityName}" PBS/ --include="*.jsonld" --include="*.json"
+
+# Scan PFI instance data
+Grep "{source-prefix}:{EntityName}" PBS/ONTOLOGIES/ontology-library/ --include="*instance*"
+```
+
+If references found → **WARN** the user with full list. User must confirm before proceeding. If references are in active skills or ProcessPaths, recommend updating those files as part of the migration.
+
+**Gate D-Q1:** Safety scan complete. User confirmed if references found.
+
+**Step D1.2 — Load Source & Target Ontologies**
+
+```bash
+# Load source ontology
+Read PBS/ONTOLOGIES/ontology-library/{series}/{SOURCE-ONT}/{source-file}.json
+
+# Load target ontology
+Read PBS/ONTOLOGIES/ontology-library/{series}/{TARGET-ONT}/{target-file}.json
+
+# Load registry index
+Read PBS/ONTOLOGIES/ontology-library/ont-registry-index.json
+```
+
+For each entity to migrate, extract:
+- Entity definition (`@id`, `@type`, `rdfs:label`, `rdfs:comment`, `oaa:description`, `oaa:properties`)
+- All properties belonging to this entity
+- All relationships WHERE this entity is domain or range
+- `rdfs:subClassOf` hierarchy (if entity has a parent)
+- Competency questions referencing this entity
+
+**Gate D-Q2:** All entities located in source with full definitions extracted.
+
+**Step D1.3 — Re-namespace**
+
+For each entity and its properties/relationships:
+
+1. Change `@id` prefix: `{source-prefix}:{EntityName}` → `{target-prefix}:{EntityName}`
+2. Change all property `@id` prefixes similarly
+3. Update `rdfs:subClassOf`:
+   - If parent entity is ALSO being migrated → keep hierarchy, update prefix
+   - If parent entity STAYS in source → create new local parent in target (e.g., `{target-prefix}:MigratedEntity`) — do NOT create cross-ontology inheritance
+4. For relationships where migrated entity is the **range** (pointed TO by other entities):
+   - Keep the relationship in the SOURCE ontology
+   - Change `rangeIncludes` to `{target-prefix}:{EntityName}`
+   - Add `"oaa:crossOntologyRef": "{TARGET-ONT}"` to the relationship
+
+**Gate D-Q3:** All entities re-namespaced. subClassOf re-parented. Cross-ontology refs set.
+
+**Step D1.4 — Insert into Target Ontology**
+
+Add to the target ontology:
+1. Entity definitions (re-namespaced)
+2. Properties (re-namespaced)
+3. Internal relationships between migrated entities (re-namespaced)
+4. New competency questions for migrated entities (minimum 1 CQ per entity)
+
+Validate the target ontology:
+- G2B: No isolated nodes (migrated entities must connect to existing target entities)
+- G2C: Single connected component maintained
+- G8: Naming conventions (PascalCase/camelCase)
+- G20: CQ coverage still >=80%
+
+**Gate D-Q4:** Target ontology valid with migrated entities. G2B/G2C/G8/G20 PASS.
+
+**Step D1.5 — Remove from Source Ontology**
+
+From the source ontology:
+1. Remove entity definitions
+2. Remove entity properties
+3. Remove internal-only relationships (both domain and range were migrated)
+4. Update relationships that NOW point cross-ontology (already done in D1.3)
+5. Remove competency questions that ONLY referenced removed entities
+6. Update entity/relationship counts in metadata
+
+Validate the source ontology:
+- G2B: No isolated nodes remain
+- G2C: Still a single connected component (or flag if migration broke connectivity)
+- G20: CQ coverage still >=80%
+
+**Gate D-Q5:** Source ontology valid post-removal. No orphaned nodes/relationships.
+
+**Step D1.6 — Version Bump & Registry Update**
+
+- **Source ontology:** MAJOR version bump (entity removal = breaking change)
+- **Target ontology:** MAJOR version bump (new entity surface = breaking change)
+- Update `oaa:moduleVersion`, `version`, `dateModified` on both
+
+Update registry entries:
+```bash
+# Update source Entry-ONT-{CODE}-001.json
+# Update target Entry-ONT-{CODE}-001.json
+# Update ont-registry-index.json (bump version, update entry versions)
+```
+
+Update unified glossary:
+```bash
+Read PBS/ONTOLOGIES/ontology-library/unified-glossary-v3.0.0.json
+# Update namespace references for migrated entities
+```
+
+**Step D1.7 — Full Validation (both ontologies)**
+
+Run ALL gates on BOTH ontologies (Section 7 validation). Both must PASS G1-G8, G20-G23.
+
+Present migration summary:
+```
+OAA v7.2 — Entity Migration Summary
+
+Source:     {SOURCE-ONT} v{old} → v{new}
+Target:     {TARGET-ONT} v{old} → v{new}
+Migrated:   {count} entities, {count} properties, {count} relationships
+Re-parented: {count} subClassOf references
+Cross-refs:  {count} oaa:crossOntologyRef added to source
+CQs moved:  {count} competency questions
+Gates:       Source G1-G23 PASS | Target G1-G23 PASS
+Registry:    v{new-version} (was v{old-version})
+Glossary:    {count} entries updated
+```
+
+**Gate D-Q6:** Both ontologies PASS all gates. Registry updated. Migration complete.
+
+---
+
+#### D2: Entity Deprecation (within ontology)
+
+For each entity to deprecate, add these optional v7.1.0 fields:
+
+```json
+{
+  "oaa:deprecated": true,
+  "oaa:deprecationDate": "YYYY-MM-DD",
+  "oaa:supersededBy": "{prefix}:{ReplacementEntity}",
+  "oaa:deprecationNote": "Reason for deprecation"
+}
+```
+
+Steps:
+1. Safety scan (same as D1.1)
+2. Add deprecation fields to each entity
+3. Add deprecation note to ontology README
+4. MINOR version bump (additive metadata, not breaking)
+5. Update registry entry
+6. Validate G1-G23
+
+---
+
+#### D3: Entity Removal (from ontology)
+
+Steps:
+1. Safety scan (same as D1.1) — **HARD BLOCK** if active SKILL.md or ProcessPath references found
+2. Remove entity definitions, properties, relationships
+3. Clean up orphaned relationships (G2B enforcement)
+4. Remove or update competency questions
+5. MAJOR version bump (breaking change)
+6. Update registry entry and index
+7. Update glossary
+8. Validate G1-G23
+
+**D3 is destructive.** Always recommend D2 (deprecation) first unless the entity is confirmed unused and removal is intentional.
+
+---
 
 ## Error Handling
 

@@ -16,6 +16,52 @@ Define Key Performance Indicators with formulas, thresholds, data sources, and B
 
 **Path:** HG-01 FAIL (3.3) -> HG-04 PASS (6.5, override from PARTIAL due to 8 sections + 5 gates) -> SKILL_STANDALONE
 
+## Mode Flag
+
+`--mode baseline|monitor` — Controls whether pfc-kpi runs in definition mode or tracking mode.
+
+### `--mode baseline` (default)
+
+Standard KPI definition and target setting. This is the full 8-section workflow described below — identify KPIs from OKR/VSOM upstream, define formulas, set thresholds, classify by BSC perspective, map data sources, and output a complete KPI definition set.
+
+**Use when:** Running pfc-kpi for the first time for an instance, or redefining the KPI set after a strategic pivot.
+
+**Output:** `ve-pipeline-output/06-kpi-{instance}-v1.0.0.jsonld` (full KPI definition set)
+
+### `--mode monitor`
+
+Delta tracking against an existing baseline KPI set. Skips Sections 2-6 (identification, definition, thresholds, BSC, data sources) and focuses on measurement and drift detection.
+
+**Workflow in monitor mode:**
+
+1. **Load baseline** — Read the existing `06-kpi-{instance}-v*.jsonld` as the reference KPI set
+2. **Collect actuals** — For each KPI, prompt for or load the current measured value
+3. **Calculate deltas** — Compare actual vs threshold:
+   - `deltaFromGreen = actual - greenThreshold` (direction-aware)
+   - `trendDirection` = improving / stable / degrading (vs prior period if available)
+   - `driftFlag` = true if actual crossed a threshold boundary since last measurement
+4. **Generate KPI scorecard** — Traffic-light table with actuals, deltas, trends:
+
+   ```text
+   | KPI               | Actual | Target | Delta  | Status | Trend |
+   |-------------------|--------|--------|--------|--------|-------|
+   | NPS Score          |   72   |   70   |  +2    | 🟢     | ↑     |
+   | Monthly Churn      |  4.2%  |  3.0%  | +1.2%  | 🟡     | →     |
+   | MRR Growth         |  8.1%  | 12.0%  | -3.9%  | 🔴     | ↓     |
+   ```
+
+5. **Drift alerts** — Flag any KPI that:
+   - Crossed from green→yellow or yellow→red since last period
+   - Has degraded for 3+ consecutive periods
+   - Has a data source marked as stale (refresh cadence exceeded)
+6. **Output monitor report** — `ve-pipeline-output/06-kpi-{instance}-monitor-{date}.jsonld`
+
+**Quality Gates in monitor mode:**
+- G1-MON: Baseline KPI file loaded and all KPIs have actuals or explicit "no data" flag
+- G2-MON: Every drift alert has a recommended action (investigate / escalate / accept)
+
+**Use when:** Called by pfc-dmaic-ve in the Control phase (`--mode monitor`) to track KPIs against the baseline defined in the Measure phase.
+
 ## What You Do
 
 When the user invokes `/azlan-github-workflow:pfc-kpi`, follow these 8 sections in order. Each section has a quality gate that MUST pass before proceeding.
