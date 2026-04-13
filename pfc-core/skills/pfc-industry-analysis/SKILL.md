@@ -1,6 +1,6 @@
 ---
 name: pfc-industry-analysis
-description: Porter's Five Forces, SWOT/TOWS, and Ansoff growth matrix providing 2-5 year competitive environment context for VE strategy formulation. Produces ind:PortersFiveForces, ind:SWOTAnalysis, ind:TOWSStrategy, and ind:AnsoffGrowthMatrix JSON-LD entities.
+description: Porter's Five Forces, SWOT/TOWS, and Ansoff growth matrix providing 2-5 year competitive environment context for VE strategy formulation. Produces ind-sa:PortersFiveForces, ind-sa:SWOTAnalysis, ind-sa:TOWSStrategy, and ind-sa:AnsoffGrowthMatrix JSON-LD entities.
 argument-hint: "[org-context file or PFI instance name]"
 user-invocable: true
 allowed-tools: "Bash(gh *),Read,Grep,Glob,Write"
@@ -67,7 +67,7 @@ For each force:
 
 | Field | Description |
 |-------|-------------|
-| `forceId` | `ind:force-{instance}-{force-name}` |
+| `forceId` | `ind-sa:force-{instance}-{force-name}` |
 | `forceName` | Rivalry / SupplierPower / BuyerPower / NewEntrants / Substitutes |
 | `intensity` | 1-5 (1=very low, 5=very high) |
 | `drivers` | 2-4 key drivers for this score |
@@ -100,7 +100,7 @@ For each SWOT factor:
 
 | Field | Description |
 |-------|-------------|
-| `factorId` | `ind:swot-{quadrant}-{seq}` |
+| `factorId` | `ind-sa:swot-{quadrant}-{seq}` |
 | `quadrant` | Strength / Weakness / Opportunity / Threat |
 | `factorName` | Concise label |
 | `description` | 1-2 sentence explanation |
@@ -128,7 +128,7 @@ For each TOWS strategy:
 
 | Field | Description |
 |-------|-------------|
-| `strategyId` | `ind:tows-{quadrant}-{seq}` |
+| `strategyId` | `ind-sa:tows-{quadrant}-{seq}` |
 | `towsQuadrant` | SO / WO / ST / WT |
 | `strategyName` | Action-oriented label |
 | `description` | How this strategy works |
@@ -160,7 +160,7 @@ For each growth vector applicable to the org:
 
 | Field | Description |
 |-------|-------------|
-| `vectorId` | `ind:ansoff-{vector}-{seq}` |
+| `vectorId` | `ind-sa:ansoff-{vector}-{seq}` |
 | `vectorType` | Penetration / MarketDevelopment / ProductDevelopment / Diversification |
 | `productRef` | Which product(s) this applies to |
 | `marketRef` | Which market segment(s) |
@@ -185,7 +185,7 @@ For each recommendation:
 
 | Field | Description |
 |-------|-------------|
-| `recommendationId` | `ind:rec-{instance}-{seq}` |
+| `recommendationId` | `ind-sa:rec-{instance}-{seq}` |
 | `title` | Action-oriented headline |
 | `rationale` | 2-3 sentences: why, based on what evidence |
 | `supportingEvidence` | References to Porter forces, SWOT factors, TOWS strategies, Ansoff vectors |
@@ -207,14 +207,14 @@ Assemble the complete INDUSTRY analysis JSON-LD:
     "macro": "https://platformcore.io/ontology/macro/",
     "pfc": "https://platformcore.io/ontology/"
   },
-  "@type": "ind:IndustryAnalysis",
-  "@id": "ind:analysis-{instance}",
-  "ind:organizationContextRef": "org:ctx-{instance-code}",
-  "ind:portersFiveForces": { "...from S2..." },
-  "ind:swotAnalysis": { "...from S3..." },
-  "ind:towsStrategies": [ "...from S4..." ],
-  "ind:ansoffGrowthMatrix": { "...from S5..." },
-  "ind:recommendations": [ "...from S6..." ],
+  "@type": "ind-sa:IndustryAnalysis",
+  "@id": "ind-sa:analysis-{instance}",
+  "ind-sa:organizationContextRef": "org:ctx-{instance-code}",
+  "ind-sa:portersFiveForces": { "...from S2..." },
+  "ind-sa:swotAnalysis": { "...from S3..." },
+  "ind-sa:towsStrategies": [ "...from S4..." ],
+  "ind-sa:ansoffGrowthMatrix": { "...from S5..." },
+  "ind-sa:recommendations": [ "...from S6..." ],
   "pfc:version": "1.0.0",
   "pfc:status": "draft",
   "pfc:createdDate": "YYYY-MM-DD"
@@ -255,7 +255,7 @@ INDUSTRY ANALYSIS Summary: {orgName} ({instance-code})
 
 | Ontology | Role | Namespace |
 |----------|------|-----------|
-| INDUSTRY-ONT v1.0.0 | Primary schema | `ind:` |
+| INDUSTRY-ONT v2.0.0 | Primary schema | `ind-sa:` |
 | ORG-CONTEXT-ONT v3.1.0 | Upstream context | `orgctx:` |
 | MACRO-ONT v1.0.0 | External factors feed | `macro:` |
 | VSOM-ONT v3.0.0 | Downstream linkage | `vsom:` |
@@ -265,7 +265,7 @@ INDUSTRY ANALYSIS Summary: {orgName} ({instance-code})
 
 | Pattern | Description |
 |---------|-------------|
-| `JP-IND-001` | `ind:CompetitiveForce` → `orgctx:CompetitiveLandscape` → `vsom:Strategy` |
-| `JP-IND-002` | `ind:TOWSStrategy` → `vsom:Strategy` (TOWS outputs inform VSOM strategy formulation) |
-| `JP-IND-003` | `ind:AnsoffGrowthMatrix` → `okr:Objective` (growth vector maps to OKR objectives) |
-| `JP-MAC-003` | `macro:PESTELFactor` → `ind:SWOTFactor` (PESTEL feeds SWOT O/T) |
+| `JP-IND-001` | `ind-sa:CompetitiveForce` → `orgctx:CompetitiveLandscape` → `vsom:Strategy` |
+| `JP-IND-002` | `ind-sa:TOWSStrategy` → `vsom:Strategy` (TOWS outputs inform VSOM strategy formulation) |
+| `JP-IND-003` | `ind-sa:AnsoffGrowthMatrix` → `okr:Objective` (growth vector maps to OKR objectives) |
+| `JP-MAC-003` | `macro:PESTELFactor` → `ind-sa:SWOTFactor` (PESTEL feeds SWOT O/T) |

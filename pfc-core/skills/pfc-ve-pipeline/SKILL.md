@@ -24,7 +24,7 @@ Path: HG-01 PASS (7.2) → HG-02 PASS (7.1, AGENT_ORCHESTRATOR) → HG-05 FAIL (
 Phase 1: Foundation    pfc-org-context       orgctx:OrganizationContext
                               |
 Phase 2: Analysis      pfc-macro-analysis     macro:PESTELFactor[] + Scenario[]
-         (parallel)    pfc-industry-analysis  ind:SWOT + TOWS[] + Ansoff
+         (parallel)    pfc-industry-analysis  ind-sa:SWOT + TOWS[] + Ansoff
                               |
 Phase 3: Strategy      pfc-vsom              vsom:Vision + Strategy[] + BSC
                               |
@@ -276,7 +276,7 @@ If mid-chain entry is used with missing upstream data:
 | ORG-CONTEXT-ONT v3.1.0 | Foundation | orgctx: |
 | RRR-ONT v4.0.0 | Cross-cutting alignment | rrr: |
 | MACRO-ONT v1.0.0 | Analysis feeder | macro: |
-| INDUSTRY-ONT v1.0.0 | Analysis feeder | ind: |
+| INDUSTRY-ONT v2.0.0 | Analysis feeder | ind-sa: |
 
 ## Sub-Skill Invocations
 

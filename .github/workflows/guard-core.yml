@@ -4,6 +4,9 @@ name: Guard PFC-Core
 # pfc-core/ is the sealed distribution path — only pfc-release.yml (via
 # github-actions[bot]) may write to it. PFI teams can read and execute
 # sealed skills but cannot modify them.
+#
+# Also blocks PFC-prefixed documents in PFI repos — PFI teams must use
+# their own instance tier prefix (PFI-BAIV-, PFI-WWG-, etc.).
 
 on:
   pull_request:
@@ -40,3 +43,38 @@ jobs:
           echo "If you need to modify a sealed skill, submit a PR to the hub repository:"
           echo "  https://github.com/ajrmooreuk/Azlan-EA-AAA"
           exit 1
+
+  guard-pfc-docs:
+    runs-on: ubuntu-latest
+    # Only runs in PFI repos — hub and convention repos skip this job
+    if: startsWith(github.repository, 'ajrmooreuk/pfi-')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Block PFC-prefixed docs in PFI repos
+        run: |
+          BASE_SHA=${{ github.event.pull_request.base.sha }}
+          HEAD_SHA=${{ github.event.pull_request.head.sha }}
+
+          # Find new .md files with PFC- prefix (added in this PR)
+          BLOCKED=$(git diff --name-only --diff-filter=A "$BASE_SHA" "$HEAD_SHA" -- '*.md' \
+            | xargs -I{} basename {} \
+            | grep -E '^PFC-' || true)
+
+          if [[ -n "$BLOCKED" ]]; then
+            echo "::error::❌ PFC-prefixed documents are not allowed in PFI repos."
+            echo ""
+            echo "The following new files use the PFC- tier prefix:"
+            echo "$BLOCKED" | while read -r f; do echo "  - $f"; done
+            echo ""
+            echo "PFI repos must use their instance tier prefix (e.g. PFI-BAIV-, PFI-WWG-, PFI-AIRL-)."
+            echo "PFC- documents belong in the hub repository (Azlan-EA-AAA)."
+            echo ""
+            echo "Reference: PFC-PBS-STD-Document-Controls-Naming-Convention-v1.0.0.md"
+            exit 1
+          fi
+
+          echo "✅ No PFC-prefixed documents found — OK"

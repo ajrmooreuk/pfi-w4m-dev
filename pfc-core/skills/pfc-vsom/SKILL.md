@@ -308,7 +308,7 @@ VSOM + BSC Summary: {orgName} ({instance-code})
 | ORG-CONTEXT-ONT v3.1.0 | Upstream context | `orgctx:` |
 | RRR-ONT v4.0.0 | Role ownership | `rrr:` |
 | MACRO-ONT v1.0.0 | SA feeder | `macro:` |
-| INDUSTRY-ONT v1.0.0 | SA feeder | `ind:` |
+| INDUSTRY-ONT v2.0.0 | SA feeder | `ind-sa:` |
 | REASON-ONT v1.0.0 | MECE validation | `rsn:` |
 
 ## Join Patterns
@@ -318,6 +318,22 @@ VSOM + BSC Summary: {orgName} ({instance-code})
 | `JP-BSC-001` | `vsom:VSOMFramework` → `bsc:operationalizedBy` → `bsc:BalancedScorecard` → `kpi:KPI` |
 | `JP-BSC-002` | `bsc:BSCPerspective` → `perspectiveOwnedBy` → `rrr:ExecutiveRole` |
 | `JP-BSC-005` | `bsc:BSCObjective` → `cascadesToOKR` → `okr:Objective` (consumed by pfc-okr) |
-| `JP-IND-002` | `ind:TOWSStrategy` → `informsStrategy` → `vsom:Strategy` |
+| `JP-IND-002` | `ind-sa:TOWSStrategy` → `informsStrategy` → `vsom:Strategy` |
 | `JP-MAC-001` | `macro:PESTELFactor.informs` → `vsom:Strategy` |
 | `JP-MAC-002` | `macro:Scenario.constrains` → `vsom:Vision` |
+
+## Wiki Hook
+
+**Standard:** F17.11 — Epic 17 (pfc-dev #86) Research Wiki integration.
+
+**Trigger:** On successful skill completion that materially changes a VSOM concept (`vsom:Vision`, `vsom:Strategy`, `vsom:OperatingModel`, `vsom:Mission`) or downstream BSC/OKR cascade.
+
+**Action:** Emit a wiki update intent for `pfc-wiki-ingest` to refresh the corresponding concept page in `PBS/RESEARCH/concepts/`. The wiki concept name is the slugified VSOM concept identifier.
+
+**Payload contract:**
+- `concept`: vsom concept slug
+- `source`: this skill invocation id (UACL hash)
+- `change_type`: `created` | `updated`
+- `affected_sections`: list of wiki sections needing refresh (e.g. `vision`, `strategy`, `operating-model`, `okr-cascade`)
+
+**Downstream:** `pfc-wiki-ingest` (SKL-233) consumes the intent → `pfc-wiki-compile` (SKL-236) refreshes `_index.md` and cross-refs.

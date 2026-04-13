@@ -1,14 +1,14 @@
 ---
 name: close-out
-description: Runs after a revision, update, addition, or review is complete. Supports PR-based, story-level, feature-level, commit-based, and session-based entry points. Closes out epics, features, and stories, updates architecture docs and operating guides, generates test plans with results, and produces a release or update bulletin with deployment and configuration requirements.
-argument-hint: "[PR/#N | --stories S40.21.1,S40.21.2 | --feature F40.21 | --commit SHA | --session] [--scope story|feature|epic|session] [--status done|partial|blocked] [--reason \"text\"] [--update-only] [--validate-only] [--skip stage1,stage2] [--bulletin-type release|update] [--repo owner/repo]"
+description: Runs after a revision, update, addition, or review is complete. Enforces AC sign-off and test pass gates before permitting close-out. Supports PR-based, story-level, feature-level, commit-based, and session-based entry points. Closes out epics, features, and stories, updates architecture docs and operating guides, generates test plans with results, and produces a release or update bulletin with deployment and configuration requirements.
+argument-hint: "[PR/#N | --stories S40.21.1,S40.21.2 | --feature F40.21 | --commit SHA | --session] [--scope story|feature|epic|session] [--status done|partial|blocked] [--reason \"text\"] [--update-only] [--validate-only] [--skip stage1,stage2] [--skip-ac \"reason\"] [--skip-tests \"reason\"] [--bulletin-type release|update] [--repo owner/repo]"
 user-invocable: true
 allowed-tools: "Bash(gh *),Bash(npx vitest *),Bash(git *),Bash(wc *),Bash(mkdir *),Read,Grep,Glob,Write,Edit"
 ---
 
-# Close-Out: Post-Change Housekeeping Pipeline v2.0
+# Close-Out: Post-Change Housekeeping Pipeline v3.0
 
-6-stage pipeline that handles all post-change documentation, issue management, and team communication after a revision, update, addition, or review. Supports 5 entry modes (PR, story, feature, commit, session), scope-conditional stage execution, partial completion tracking, and validate-only dry runs. Each stage confirms with the user before proceeding. Any stage can be skipped.
+7-stage pipeline (Gate 0 + 6 execution stages) that handles all post-change documentation, issue management, and team communication after a revision, update, addition, or review. **Gate 0 enforces Acceptance Criteria sign-off and test pass verification before any close-out proceeds** — no close without AC verified and tests green, or explicit approved skip with audited justification. Supports 5 entry modes (PR, story, feature, commit, session), scope-conditional stage execution, partial completion tracking, and validate-only dry runs. Each stage confirms with the user before proceeding. Any stage can be skipped.
 
 ## Dtree Classification
 
@@ -40,6 +40,8 @@ When the user invokes `/azlan-github-workflow:close-out`, determine the entry mo
 | `--update-only` | Run Stage 1 only, skip stages 2-6 |
 | `--validate-only` | Dry run — report what WOULD happen, make no changes |
 | `--skip stage1,stage3` | Skip specific stages |
+| `--skip-ac "reason"` | Bypass AC verification gate (reason mandatory, recorded as rrr:Decision) |
+| `--skip-tests "reason"` | Bypass test pass gate (reason mandatory, recorded as rrr:Decision) |
 | `--bulletin-type release\|update` | Force bulletin type |
 | `--repo owner/repo` | Target repository |
 
@@ -85,6 +87,7 @@ If `--scope` is explicitly provided, it overrides the default.
 
 | Stage | story | feature | epic/session |
 |-------|:-----:|:-------:|:------------:|
+| G0: Pre-Flight (AC + Tests) | Enforced (if --status done) | Enforced | Enforced |
 | 1: Issue Close-Out | Partial | Full | Full |
 | 2: Arch Delta | Skip | If impact | Execute |
 | 3: Op Guide | Skip | If user-facing | Execute |
@@ -283,6 +286,269 @@ Stages:          1 ✓  2 ✓  3 ✓  4 ✓  5 ✓  6 ✓
                  (no changes will be made — dry run only)
 
 Proceed?
+```
+
+---
+
+### Gate 0: Pre-Flight Verification (AC Sign-Off + Test Pass)
+
+**Purpose:** Enforce that no story, feature, or epic can be closed out unless (a) all Acceptance Criteria are verified and (b) all relevant tests pass. Bypass requires explicit justification and produces an auditable governance record.
+
+**This gate is MANDATORY and runs before Stage 1. It cannot be skipped via `--skip stage0` — only `--skip-ac` and `--skip-tests` with documented reasons can bypass individual checks.**
+
+#### G0.1 Scope Gate
+
+```
+--status partial   → Gate 0 SKIPPED (partial close-out is not a completion claim)
+--status blocked   → Gate 0 SKIPPED (blocked close-out is not a completion claim)
+--update-only      → Gate 0 SKIPPED (no close-out is being performed)
+--validate-only    → Gate 0 REPORTS what WOULD be checked (no blocking)
+--status done      → Gate 0 ENFORCED (you are claiming completion — prove it)
+```
+
+#### G0.2 Acceptance Criteria Verification
+
+**For each story being closed out:**
+
+```bash
+# Read the story issue body
+gh issue view $STORY_NUMBER --json body --jq '.body' --repo $REPO > /tmp/story-body.md
+```
+
+Extract all acceptance criteria lines. AC lines are identified by:
+- Checkbox patterns: `- [ ]` or `- [x]` under a heading containing "Acceptance Criteria", "AC", or "Definition of Done"
+- Given/When/Then blocks under the same headings
+- Numbered criteria lists under the same headings
+
+**Verification rules:**
+
+| Condition | Result |
+|---|---|
+| All AC checkboxes are `[x]` | **PASS** |
+| Any AC checkbox is `[ ]` (unticked) | **FAIL** — list the unticked criteria |
+| No AC section found in issue body | **WARN** — flag missing AC; ask user to confirm intentional |
+| Given/When/Then blocks present without checkboxes | **WARN** — cannot auto-verify; ask user to confirm tested |
+
+**For each feature being closed out (feature/epic scope):**
+
+```bash
+# Read the feature issue body
+gh issue view $FEATURE_NUMBER --json body --jq '.body' --repo $REPO > /tmp/feature-body.md
+```
+
+Apply the same AC extraction and verification. Feature-level AC is typically higher-level (integration, E2E) than story-level AC.
+
+**For epic scope:** Verify AC on all features being marked complete in this close-out, not all features in the epic.
+
+**On FAIL:**
+
+```
+Gate 0: Acceptance Criteria Verification
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Status:  BLOCKED — 2 unticked acceptance criteria
+
+Story S40.21.1 (#124):
+  ✓ AC-1: User can navigate via keyboard Tab key
+  ✓ AC-2: Focus ring visible on all interactive elements
+  ✗ AC-3: Screen reader announces current nav position
+  ✗ AC-4: WCAG 2.1 AA compliance verified via axe-core
+
+Feature F40.21 (#120):
+  ✓ AC-1: All nav items keyboard-accessible
+  ✓ AC-2: Accessibility audit passes with zero critical findings
+
+Close-out cannot proceed until unticked AC are resolved.
+
+Options:
+  1. Fix the outstanding items and re-run close-out
+  2. Bypass with: --skip-ac "reason for accepting incomplete AC"
+```
+
+**Pipeline halts here. No Stage 1–6 execution until resolved or bypassed.**
+
+#### G0.3 Test Pass Verification
+
+Run the relevant test suite based on scope:
+
+```bash
+# Determine which test suites are relevant
+# If changed files include ontology-visualiser: run visualiser tests
+# If changed files include pfc-web-app: run pfc-web-app tests
+# If changed files include both: run both
+
+# Visualiser tests
+cd PBS/TOOLS/ontology-visualiser && npx vitest run 2>&1 | tee /tmp/test-results-vis.txt
+
+# pfc-web-app tests
+cd PBS/TOOLS/pfc-web-app && npx vitest run 2>&1 | tee /tmp/test-results-app.txt
+```
+
+Parse results for pass/fail counts.
+
+**Verification rules:**
+
+| Condition | Result |
+|---|---|
+| All tests pass (0 failures) | **PASS** |
+| Failures only in pre-existing known failures (12 ds-pptx-bridge + skills-register) | **PASS** (with note) |
+| Any NEW test failure | **FAIL** — list failing tests |
+| Test suite cannot run (missing deps, syntax error) | **FAIL** — report error |
+| No test files changed or relevant | **WARN** — flag that no new tests cover the change; ask user to confirm acceptable |
+
+**On FAIL:**
+
+```
+Gate 0: Test Pass Verification
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Status:  BLOCKED — 3 test failures
+
+Failing tests:
+  FAIL  tests/kano-classification.test.js > KanoClassification > should classify Must-Be correctly
+  FAIL  tests/kano-classification.test.js > KanoClassification > should detect decay from Attractive to Performance
+  FAIL  tests/kano-survey.test.js > KanoSurvey > should reject confidence below 0.6
+
+Total: 1524 pass, 3 fail (+ 12 pre-existing known failures excluded)
+
+Close-out cannot proceed with new test failures.
+
+Options:
+  1. Fix the failing tests and re-run close-out
+  2. Bypass with: --skip-tests "reason for accepting test failures"
+```
+
+**Pipeline halts here. No Stage 1–6 execution until resolved or bypassed.**
+
+#### G0.4 No-New-Tests Warning
+
+If the change includes new or modified source files but NO new or modified test files:
+
+```
+Gate 0: Test Coverage Warning
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Status:  WARNING — no new tests detected for changed source files
+
+Changed source files without test coverage:
+  js/kano-decay-tracker.js (new file — no corresponding test)
+  js/vp-claim-tester.js (modified — no test changes)
+
+This is a WARNING, not a block. Close-out may proceed.
+Recommendation: Add tests before or immediately after close-out.
+```
+
+This warning is logged in the Gate 0 report but does not block the pipeline.
+
+#### G0.5 Bypass Handling (`--skip-ac`, `--skip-tests`)
+
+When either bypass flag is provided, the gate check is skipped for that dimension but a **governance record** is produced.
+
+**Bypass produces an rrr:Decision record:**
+
+```json
+{
+  "@type": "rrr:Decision",
+  "decisionStatement": "AC verification bypassed for close-out of F40.21",
+  "decisionType": "governance",
+  "decisionStatus": "approved",
+  "madeBy": "{current user from gh auth status}",
+  "decidedAt": "{ISO 8601 timestamp}",
+  "rationale": "{--skip-ac reason text}",
+  "alternatives": ["Complete the AC items", "Defer close-out"],
+  "threshold": "cross-role",
+  "addressesRisk": "R-PROC-GATE: Close-out without full AC verification",
+  "generatesRequirement": "REQ-PROC-BACKLOG: Complete unticked AC items post-close-out",
+  "linkedDoc": "close-out session ref or PR number",
+  "orgContext": "{PFI instance or PFC}"
+}
+```
+
+The decision record is:
+1. **Appended as a comment** on the feature/story issue being closed out
+2. **Recorded in the Stage 5 bulletin** under a "Governance Bypasses" section
+3. **Logged to stdout** in the Gate 0 report
+
+**Bypass report:**
+
+```
+Gate 0: Pre-Flight Verification
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AC Verification:     BYPASSED ⚠️
+  Reason:            "Accessibility audit tool unavailable — vendor licence expired, renewal in progress"
+  Decision recorded: rrr:Decision on #124 (S40.21.1)
+  Backlog item:      REQ-PROC-BACKLOG: Complete AC-3, AC-4 when audit tool restored
+
+Test Verification:   PASS ✓
+  Visualiser:        1527/1527 (+ 12 known excluded)
+  pfc-web-app:       414/414
+
+Gate 0:              CONDITIONAL PASS (1 bypass, 1 pass)
+                     Proceeding to Stage 1 with governance record.
+```
+
+#### G0.6 Combined Gate Result
+
+| AC Result | Test Result | Gate Decision |
+|---|---|---|
+| PASS | PASS | **PROCEED** — clean close-out |
+| PASS | FAIL | **BLOCKED** — fix tests or `--skip-tests` |
+| FAIL | PASS | **BLOCKED** — complete AC or `--skip-ac` |
+| FAIL | FAIL | **BLOCKED** — both must be resolved or bypassed |
+| BYPASS | PASS | **CONDITIONAL PROCEED** — governance record created |
+| PASS | BYPASS | **CONDITIONAL PROCEED** — governance record created |
+| BYPASS | BYPASS | **CONDITIONAL PROCEED** — two governance records, flagged in bulletin |
+| WARN (no AC found) | PASS | **PROCEED** with warning logged |
+| PASS | WARN (no new tests) | **PROCEED** with warning logged |
+
+#### G0.7 Discovery Summary Update
+
+The Step 0.11 discovery summary now includes Gate 0 status:
+
+```
+Close-Out Pipeline Configuration
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Entry Mode:      PR-based
+PR:              #123 — "F40.21: Dynamic Nav Accessibility"
+Linked Issues:   #124 (S40.21.1), #125 (S40.21.2)
+Parent Feature:  #120 (F40.21)
+Parent Epic:     #577 (Epic 40)
+Files Changed:   12
+Scope:           epic
+Status:          done
+Bulletin Type:   release
+
+Gate 0: Pre-Flight
+  AC Verified:   ✓ (4/4 criteria on S40.21.1, 2/2 on F40.21)
+  Tests Pass:    ✓ (1527/1527 + 414/414)
+
+Stages:          1 ✓  2 ✓  3 ✓  4 ✓  5 ✓  6 ✓
+
+Proceed? (User confirms or adjusts)
+```
+
+Or with a bypass:
+
+```
+Gate 0: Pre-Flight
+  AC Verified:   ⚠️ BYPASSED — "vendor licence expired"
+  Tests Pass:    ✓ (1527/1527 + 414/414)
+  Governance:    1 rrr:Decision recorded on #124
+```
+
+#### G0.8 Report
+
+```
+Gate 0: Pre-Flight Verification
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AC Verification:     PASS ✓
+  S40.21.1:          4/4 criteria verified [x]
+  S40.21.2:          3/3 criteria verified [x]
+  F40.21:            2/2 criteria verified [x]
+
+Test Verification:   PASS ✓
+  Visualiser:        1527/1527 pass (+ 12 known excluded)
+  pfc-web-app:       414/414 pass
+  New test coverage:  24 new tests in 2 files
+
+Gate 0:              PASS ✓ — proceeding to Stage 1
 ```
 
 ---
@@ -854,7 +1120,12 @@ Close-Out Pipeline Complete
 Entry Mode:   PR-based (#123)
 Scope:        epic
 Status:       done
-Stages:       6/6 executed (0 skipped)
+Stages:       G0 + 6/6 executed (0 skipped)
+
+Gate 0: Pre-Flight ✓
+  AC Verified:     4/4 (S40.21.1), 3/3 (S40.21.2), 2/2 (F40.21)
+  Tests Pass:      1551/1551 + 414/414
+  Bypasses:        None
 
 Stage 1: Issue Close-Out ✓
   Stories done:     S40.21.1, S40.21.2
@@ -891,7 +1162,12 @@ Close-Out Pipeline Complete
 Entry Mode:   story-level (--stories S40.21.1,S40.21.2)
 Scope:        story
 Status:       done
-Stages:       1/6 executed (5 skipped)
+Stages:       G0 + 1/6 executed (5 skipped)
+
+Gate 0: Pre-Flight ✓
+  AC Verified:     2/2 (S40.21.1), 3/3 (S40.21.2)
+  Tests Pass:      1527/1527
+  Bypasses:        None
 
 Stage 1: Issue Close-Out ✓
   Stories done:     S40.21.1 ✓, S40.21.2 ✓
@@ -963,7 +1239,9 @@ Session tag:  close-out/2026-03-01-1430
 - **Stage fails:** Report the failure, offer to retry or skip that stage. Never silently continue past a failure.
 - **Issue body too large for `gh`:** Split the body into sections, or warn and ask user to update manually.
 - **No linked issues found:** Ask user for the relevant issue numbers manually.
-- **Test suite fails:** Report failures in Stage 4 but do NOT mark the stage as failed — document the failures in the test plan. Flag them in the bulletin.
+- **Gate 0 AC verification fails:** Pipeline halts. Present unticked AC items. User must either fix them and re-run, or bypass with `--skip-ac "reason"` which produces an rrr:Decision governance record.
+- **Gate 0 test verification fails:** Pipeline halts. Present failing tests. User must either fix them and re-run, or bypass with `--skip-tests "reason"` which produces an rrr:Decision governance record.
+- **Test suite fails in Stage 4 (after Gate 0 pass):** This should not occur if Gate 0 ran correctly. If it does (e.g. flaky test), document the failures in the test plan and flag them in the bulletin. Do NOT silently continue.
 - **No PR provided and no current branch PR:** Ask the user for the PR or issue number, or suggest `--stories`, `--feature`, `--commit`, or `--session` entry modes.
 - **Story not found by title pattern:** Warn and ask user for the issue number directly. Retry with a broader search (`gh issue list --search "S40.21.1"`) if the title-based lookup fails.
 - **Commit has no story/feature references:** Present the changed files and ask user to manually specify which stories/features this commit relates to.
@@ -972,6 +1250,8 @@ Session tag:  close-out/2026-03-01-1430
 
 ## Standing Rules Enforced
 
+- **NO CLOSE WITHOUT AC SIGN-OFF AND TESTS PASSING** — Gate 0 is mandatory for all `--status done` close-outs. Bypass requires `--skip-ac "reason"` or `--skip-tests "reason"` with mandatory justification recorded as rrr:Decision. No bypass without a reason. No silent skip.
+- **Gate 0 bypasses produce rrr:Decision governance records** — appended as issue comments, recorded in bulletins, logged to stdout. Full provenance: who bypassed, when, why, what risk accepted, what backlog item generated.
 - **NEVER use `sed` on GitHub issue bodies** — special chars cause regex errors and can wipe the body. Always use `--body-file` with a temp file.
 - **Epic body updates are MANDATORY** when a feature is closed (MEMORY.md standing rule).
 - **Epic body updates are ONLY triggered when a feature is FULLY complete** — partial story close-out must NOT prematurely mark features or update epic completion counts.
